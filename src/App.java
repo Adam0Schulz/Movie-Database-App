@@ -3,15 +3,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.ArrayList;
 import java.util.Scanner;
 import java.io.Serializable;
-
-import javax.print.attribute.standard.PrinterMessageFromOperator;
+import java.util.ArrayList;
 
 public class App implements Serializable {
 
-    static Database database = load("src/database.ser");
+    static Database database = load("database.ser");
     static String chooseSentence = "Please choose one of the following options:";
     static User currentUser;
 
@@ -34,7 +32,19 @@ public class App implements Serializable {
          * "comedy action", characters));
          */
 
-        System.out.println(database.getMovies().get(0).getTitle());
+        // addition of admin user
+
+        /*
+         * User admin = new User("admin", "Admin123"); admin.makeAdmin();
+         * database.addUser(admin); save(database);
+         */
+
+        /*
+         * database.addUser(new User("Babak", "kebab")); save(database);
+         */
+        // System.out.println(database.getMovies().get(0).getTitle());
+        // System.out.println(database.getUsers().get(1).getUsername());
+        start();
 
     }
 
@@ -152,14 +162,14 @@ public class App implements Serializable {
         System.out.println("Incorrect " + input + ". Please try again.");
     }
 
-    public static void save() {
+    public static void save(Database database) {
         try {
-            FileOutputStream fileOut = new FileOutputStream("src/database.ser");
+            FileOutputStream fileOut = new FileOutputStream("database.ser");
             ObjectOutputStream out = new ObjectOutputStream(fileOut);
             out.writeObject(database);
             out.close();
             fileOut.close();
-            System.out.printf("Serialized data is saved in src/database.ser");
+            System.out.printf("Serialized data is saved in database.ser");
         } catch (IOException i) {
             i.printStackTrace();
         }

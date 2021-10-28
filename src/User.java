@@ -1,6 +1,7 @@
 import java.util.ArrayList;
+import java.io.Serializable;
 
-public class User {
+public class User implements Serializable {
     private String username;
     private String password;
     private ArrayList<Movie> favouriteList = new ArrayList<Movie>();
@@ -12,6 +13,10 @@ public class User {
         this.username = username;
         this.password = password;
         this.admin = false;
+    }
+
+    public void makeAdmin() {
+        this.admin = true;
     }
 
     public String getUsername() {
