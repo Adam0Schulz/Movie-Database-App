@@ -1,3 +1,13 @@
+/*
+Notes for later
+1. add save
+2. add admin fuctionality
+3. make the commands consistent
+4. divide methods into smaller ones if it makes sense
+5. divide methods across classes if it makes sense
+6. have as little methods in App class as possible
+*/
+
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.io.*;
@@ -7,7 +17,8 @@ public class App implements Serializable {
     static Database database = load("database.ser");
     static String chooseSentence = "Please choose one of the following options:";
     static User currentUser;
-    static Scanner scanner = new Scanner(System.in);
+    static Scanner scanner = new Scanner(System.in); // opening the scanner but not closing it (intentionally) because
+                                                     // it causes problems when there are multiple uses of a scanner
 
     public static void main(String[] args) throws Exception {
 
@@ -77,12 +88,13 @@ public class App implements Serializable {
     public static void menu() {
         System.out.println(chooseSentence
                 + "(1) list all the movies, (2) search for a movie by title, (3) list all of your favourite movies");
-        if (scannerInt(scanner) == 1) {
+        int choice = scannerInt(scanner);
+        if (choice == 1) {
             System.out.println("Enter the number of the coresponding movie: ");
             database.listMovies();
             Movie movie = database.selectMovie(scannerInt(scanner));
             movieMenu(movie);
-        } else if (scannerInt(scanner) == 2) {
+        } else if (choice == 2) {
             System.out.println("Enter the title of movie you want to search for: ");
             Movie selectedMovie = database.searchForMovie(scannerString(scanner));
             if (selectedMovie == null) {
@@ -91,7 +103,7 @@ public class App implements Serializable {
             } else {
                 movieMenu(selectedMovie);
             }
-        } else if (scannerInt(scanner) == 3) {
+        } else if (choice == 3) {
             System.out.println(
                     "This is your favourite list. You can play a movie by typing the coresponding number or you can go back by typing the number 0");
             currentUser.listFavourites();
@@ -115,12 +127,13 @@ public class App implements Serializable {
     public static void movieMenu(Movie movie) {
         System.out.println(chooseSentence + "(1) play " + movie.getTitle() + ", (2) add " + movie.getTitle()
                 + " to your favourite list");
-        if (scannerInt(scanner) == 1) {
+        int choice = scannerInt(scanner);
+        if (choice == 1) {
             movie.playMovie();
             currentUser.addSeenMovie(movie);
             goBack();
 
-        } else if (scannerInt(scanner) == 2) {
+        } else if (choice == 2) {
             currentUser.addToFavouriteList(movie);
             menu();
         }
@@ -146,8 +159,10 @@ public class App implements Serializable {
     }
 
     public static int scannerInt(Scanner scanner) {
-        int input = scanner.nextInt();
-        return input;
+        String input = scanner.nextLine(); // the reason why I'm using the nextLine() and then parsing it to integer and
+                                           // not nextInt() is that nextInt() causes problems with leftover \n (enters)
+                                           // and messes up the inputs
+        return Integer.parseInt(input);
     }
 
     public static void incorrectInput(String input) {
