@@ -1,3 +1,7 @@
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class App {
@@ -7,7 +11,19 @@ public class App {
     static User currentUser;
 
     public static void main(String[] args) throws Exception {
-        start();
+        ArrayList<Character> characters = new ArrayList<Character>();
+        characters.add(new Character("Teddy Adams", "Allen C. Gardner"));
+        characters.add(new Character("Lloyd Gibbard", "Drew Smith"));
+        characters.add(new Character("Hailey Emerson", "Hayden Blane"));
+        characters.add(new Character("Lisa Lane", "Alexis Boozer Sterling"));
+        database.addMovie(new Movie("Being Awesome", 2014, "drama", characters));
+        characters = new ArrayList<Character>();
+        characters.add(new Character("Stephen", "Stephen Dypiangco"));
+        characters.add(new Character("Patrick", "Patrick Epino"));
+        characters.add(new Character("Tamlyn", "Tamlyn Tomito"));
+        characters.add(new Character("Al", "Al Leong"));
+        database.addMovie(new Movie("Awesome Asian Bad Guys", 2014, "comedy action", characters));
+        save();
 
     }
 
@@ -123,5 +139,18 @@ public class App {
 
     public static void incorrectInput(String input) {
         System.out.println("Incorrect " + input + ". Please try again.");
+    }
+
+    public static void save() {
+        try {
+            FileOutputStream fileOut = new FileOutputStream("../lib/database.ser");
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(database);
+            out.close();
+            fileOut.close();
+            System.out.printf("Serialized data is saved in ../lib/database.ser");
+        } catch (IOException i) {
+            i.printStackTrace();
+        }
     }
 }

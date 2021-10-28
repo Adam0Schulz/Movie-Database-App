@@ -5,14 +5,14 @@ public class Movie {
     // Attributes
     private String title;
     private int productionYear;
-    private String description;
+    private String genre;
     private ArrayList<Character> characters = new ArrayList<Character>();
 
     // Constructors
-    public Movie(String title, int productionYear, String description, ArrayList<Character> characters) {
+    public Movie(String title, int productionYear, String genre, ArrayList<Character> characters) {
         this.title = title;
         this.productionYear = productionYear;
-        this.description = description;
+        this.genre = genre;
         this.characters = characters;
     }
 
@@ -33,12 +33,12 @@ public class Movie {
         this.productionYear = productionYear;
     }
 
-    public String getDescription() {
-        return this.description;
+    public String getGenre() {
+        return this.genre;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setGenre(String genre) {
+        this.genre = genre;
     }
 
     public ArrayList<Character> getCharacters() {
