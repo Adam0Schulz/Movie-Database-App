@@ -1,29 +1,40 @@
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.io.Serializable;
 
-public class App {
+import javax.print.attribute.standard.PrinterMessageFromOperator;
 
-    static Database database = new Database();
+public class App implements Serializable {
+
+    static Database database = load("src/database.ser");
     static String chooseSentence = "Please choose one of the following options:";
     static User currentUser;
 
     public static void main(String[] args) throws Exception {
-        ArrayList<Character> characters = new ArrayList<Character>();
-        characters.add(new Character("Teddy Adams", "Allen C. Gardner"));
-        characters.add(new Character("Lloyd Gibbard", "Drew Smith"));
-        characters.add(new Character("Hailey Emerson", "Hayden Blane"));
-        characters.add(new Character("Lisa Lane", "Alexis Boozer Sterling"));
-        database.addMovie(new Movie("Being Awesome", 2014, "drama", characters));
-        characters = new ArrayList<Character>();
-        characters.add(new Character("Stephen", "Stephen Dypiangco"));
-        characters.add(new Character("Patrick", "Patrick Epino"));
-        characters.add(new Character("Tamlyn", "Tamlyn Tomito"));
-        characters.add(new Character("Al", "Al Leong"));
-        database.addMovie(new Movie("Awesome Asian Bad Guys", 2014, "comedy action", characters));
-        save();
+
+        // addition of the first two movies
+
+        /*
+         * ArrayList<Character> characters = new ArrayList<Character>();
+         * characters.add(new Character("Teddy Adams", "Allen C. Gardner"));
+         * characters.add(new Character("Lloyd Gibbard", "Drew Smith"));
+         * characters.add(new Character("Hailey Emerson", "Hayden Blane"));
+         * characters.add(new Character("Lisa Lane", "Alexis Boozer Sterling"));
+         * database.addMovie(new Movie("Being Awesome", 2014, "drama", characters));
+         * characters = new ArrayList<Character>(); characters.add(new
+         * Character("Stephen", "Stephen Dypiangco")); characters.add(new
+         * Character("Patrick", "Patrick Epino")); characters.add(new
+         * Character("Tamlyn", "Tamlyn Tomito")); characters.add(new Character("Al",
+         * "Al Leong")); database.addMovie(new Movie("Awesome Asian Bad Guys", 2014,
+         * "comedy action", characters));
+         */
+
+        System.out.println(database.getMovies().get(0).getTitle());
 
     }
 
@@ -143,14 +154,31 @@ public class App {
 
     public static void save() {
         try {
-            FileOutputStream fileOut = new FileOutputStream("../lib/database.ser");
+            FileOutputStream fileOut = new FileOutputStream("src/database.ser");
             ObjectOutputStream out = new ObjectOutputStream(fileOut);
             out.writeObject(database);
             out.close();
             fileOut.close();
-            System.out.printf("Serialized data is saved in ../lib/database.ser");
+            System.out.printf("Serialized data is saved in src/database.ser");
         } catch (IOException i) {
             i.printStackTrace();
         }
+    }
+
+    public static Database load(String file) {
+        Database database = null;
+        try {
+            FileInputStream filein = new FileInputStream(file);
+            ObjectInputStream in = new ObjectInputStream(filein);
+            database = (Database) in.readObject();
+            in.close();
+            filein.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException c) {
+            c.printStackTrace();
+        }
+        return database;
+
     }
 }

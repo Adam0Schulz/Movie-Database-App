@@ -1,6 +1,7 @@
 import java.util.ArrayList;
+import java.io.Serializable;
 
-public class Database {
+public class Database implements Serializable {
     private ArrayList<User> users = new ArrayList<User>();
     private ArrayList<Movie> movies = new ArrayList<Movie>();
 
