@@ -39,7 +39,7 @@ public class App implements Serializable {
          */
         // System.out.println(database.getMovies().get(0).getTitle());
         // System.out.println(database.getUsers().get(1).getUsername());
-        System.out.println("hi guys");
+        start();
 
     }
 
