@@ -46,6 +46,12 @@ public class Movie implements Serializable {
         return this.characters;
     }
 
+    public void listCharacters() {
+        for (int i = 1; i < characters.size(); i++) {
+            System.out.println(i + ": " + characters.get(i - 1));
+        }
+    }
+
     public void setCharacters(ArrayList<Character> characters) {
         this.characters = characters;
     }

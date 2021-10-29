@@ -1,6 +1,10 @@
 /*
 Notes for later
 1. add save
+1.5. fix adding to favourites
+1.6. add closing functionality
+1.7. deleting a movie from a favourites
+1.8. seenMovies menu
 2. add admin fuctionality
 3. make the commands consistent
 4. divide methods into smaller ones if it makes sense
@@ -11,9 +15,13 @@ Notes for later
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.io.*;
+import java.util.concurrent.TimeUnit;
+
+import javax.xml.namespace.QName;
 
 public class App implements Serializable {
 
+    // static Database database = new Database();
     static Database database = load("database.ser");
     static String chooseSentence = "Please choose one of the following options:";
     static User currentUser;
@@ -23,7 +31,6 @@ public class App implements Serializable {
     public static void main(String[] args) throws Exception {
 
         // addition of the first two movies
-
         /*
          * ArrayList<Character> characters = new ArrayList<Character>();
          * characters.add(new Character("Teddy Adams", "Allen C. Gardner"));
@@ -38,15 +45,11 @@ public class App implements Serializable {
          * "Al Leong")); database.addMovie(new Movie("Awesome Asian Bad Guys", 2014,
          * "comedy action", characters));
          */
-
         // addition of admin user
-
         /*
          * User admin = new User("admin", "Admin123"); admin.makeAdmin();
-         * database.addUser(admin); save(database);
-         */
-
-        /*
+         * database.addUser(admin);
+         * 
          * database.addUser(new User("Babak", "kebab")); save(database);
          */
         // System.out.println(database.getMovies().get(0).getTitle());
@@ -57,7 +60,9 @@ public class App implements Serializable {
 
     public static void start() {
         System.out.println(
-                "Welcome to our awesome movie database thingy app. Enjoy yourself on your journey through this awesomeness!!!");
+                "\nWelcome to our awesome movie database thingy app. Enjoy yourself on your journey through this awesomeness!!!");
+        System.out.println(
+                "Anytime you feel like you had enough of this awesomeness press Q to awesome save and exit in style\n");
         login();
     }
 
@@ -71,23 +76,29 @@ public class App implements Serializable {
             String password = scannerString(scanner);
             database.addUser(new User(username, password));
             currentUser = database.searchForUser(username);
-            menu();
+            menu(currentUser.isAdmin());
         } else {
             System.out.println("Please enter your password: ");
             String password = scannerString(scanner);
             if (currentUser.passwordValidation(password)) {
-                menu();
+                menu(currentUser.isAdmin());
             } else {
                 incorrectInput("password");
                 login();
             }
 
         }
+
     }
 
-    public static void menu() {
+    public static void menu(boolean admin) {
+        String extension = "";
+        if (admin) {
+            extension = ", (4) create a movie";
+        }
         System.out.println(chooseSentence
-                + "(1) list all the movies, (2) search for a movie by title, (3) list all of your favourite movies");
+                + "(1) list all the movies, (2) search for a movie by title, (3) list all of your favourite movies"
+                + extension);
         int choice = scannerInt(scanner);
         if (choice == 1) {
             System.out.println("Enter the number of the coresponding movie: ");
@@ -99,7 +110,7 @@ public class App implements Serializable {
             Movie selectedMovie = database.searchForMovie(scannerString(scanner));
             if (selectedMovie == null) {
                 incorrectInput("movie title");
-                menu();
+                menu(currentUser.isAdmin());
             } else {
                 movieMenu(selectedMovie);
             }
@@ -109,7 +120,7 @@ public class App implements Serializable {
             currentUser.listFavourites();
             int input = scannerInt(scanner);
             if (input == 0) {
-                menu();
+                menu(currentUser.isAdmin());
             } else {
                 Movie selectedMovie = currentUser.getFavouriteList().get(input - 1);
                 selectedMovie.playMovie();
@@ -117,11 +128,61 @@ public class App implements Serializable {
                 goBack();
             }
         } else {
-            incorrectInput("input");
-            menu();
+
+            if (currentUser.isAdmin()) {
+                if (choice == 4) {
+                    createMovie();
+                    menu(currentUser.isAdmin());
+                } else {
+                    incorrectInput("choice");
+                    menu(currentUser.isAdmin());
+                }
+            } else {
+                incorrectInput("choice");
+                menu(currentUser.isAdmin());
+            }
+
         }
         // print out the prompt to choose between list movies, search for a movie and
         // list your favourite list, and calls according methods.
+    }
+
+    public static void createMovie() {
+        System.out.println("To create a movie please enter the following information: ");
+        System.out.println("Title: ");
+        String title = scannerString(scanner);
+        System.out.println("Year of production: ");
+        int year = scannerInt(scanner);
+        System.out.println("Enter all of one/multiple genres separated by a space: ");
+        String genre = scannerString(scanner);
+        System.out
+                .println("Enter characters one by one in this format (role - actor) and when you're done enter done: ");
+        ArrayList<Character> characters = new ArrayList<Character>();
+        thingyThatWeWillCallLater(scannerString(scanner), characters);
+        System.out.println("Movie has been added to the database");
+    }
+
+    public static ArrayList<Character> thingyThatWeWillCallLater(String input, ArrayList<Character> characters) {
+        if (input.equals("done")) {
+            return characters;
+        } else {
+            String[] attributes = input.split(" - ", 2);
+            Character character = new Character(attributes[0], attributes[1]);
+            characters.add(character);
+
+            thingyThatWeWillCallLater(scannerString(App.scanner), characters);
+        }
+        return characters;
+    }
+
+    public static void updateMovie() {
+
+    }
+
+    public static void clear() {
+        System.out.print("Everything on the console will cleared");
+        System.out.print("\033[H\033[2J");
+        System.out.flush();
     }
 
     public static void movieMenu(Movie movie) {
@@ -135,14 +196,14 @@ public class App implements Serializable {
 
         } else if (choice == 2) {
             currentUser.addToFavouriteList(movie);
-            menu();
+            menu(currentUser.isAdmin());
         }
     }
 
     public static void goBack() {
         System.out.println("Enter the letter Q to go back to the main menu");
         if (scannerString(scanner).equalsIgnoreCase("q")) {
-            menu();
+            menu(currentUser.isAdmin());
         } else {
             incorrectInput("input");
             goBack();
@@ -153,8 +214,14 @@ public class App implements Serializable {
         System.out.println("here is your list of your favourite movies");
     }
 
-    public static String scannerString(Scanner scanner) {
-        String input = scanner.nextLine();
+    public static String scannerString(Scanner scanner2) {
+        String input = scanner2.nextLine();
+        /*
+         * if (input.equalsIgnoreCase("q")) { System.out.println("Saving...");
+         * save(database); clear(); System.exit(0);
+         * 
+         * }
+         */
         return input;
     }
 
@@ -162,6 +229,12 @@ public class App implements Serializable {
         String input = scanner.nextLine(); // the reason why I'm using the nextLine() and then parsing it to integer and
                                            // not nextInt() is that nextInt() causes problems with leftover \n (enters)
                                            // and messes up the inputs
+        /*
+         * if (input.equalsIgnoreCase("q")) { System.out.println("Saving...");
+         * save(database); clear(); System.exit(0);
+         * 
+         * }
+         */
         return Integer.parseInt(input);
     }
 

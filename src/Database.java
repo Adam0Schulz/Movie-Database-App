@@ -57,4 +57,10 @@ public class Database implements Serializable {
         }
         return null;
     }
+
+    @Override
+    public String toString() {
+        return "{" + " users='" + getUsers() + "'" + ", movies='" + getMovies() + "'" + "}";
+    }
+
 }

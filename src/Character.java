@@ -28,4 +28,9 @@ public class Character implements Serializable {
     public String getActor() {
         return actor;
     }
+
+    public String toString() {
+        return role + " - " + actor;
+    }
+
 }
