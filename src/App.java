@@ -1,14 +1,15 @@
 /*
 Notes for later
-1.7. deleting a movie from a favourites
 3. make the commands consistent
 4. divide methods into smaller ones if it makes sense
 5. divide methods across classes if it makes sense
 6. have as little methods in App class as possible
+7. add movies
+8. change list seenMovies to see stats
+9. be able to search for a movie by all of it's attributes
 */
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Scanner;
 import java.io.*;
 
