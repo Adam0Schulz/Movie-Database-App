@@ -1,11 +1,6 @@
 /*
 Notes for later
-1. add save
-1.5. fix adding to favourites
-1.6. add closing functionality
 1.7. deleting a movie from a favourites
-1.8. seenMovies menu
-2. add admin fuctionality
 3. make the commands consistent
 4. divide methods into smaller ones if it makes sense
 5. divide methods across classes if it makes sense
@@ -13,11 +8,9 @@ Notes for later
 */
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Scanner;
 import java.io.*;
-import java.util.concurrent.TimeUnit;
-
-import javax.xml.namespace.QName;
 
 public class App implements Serializable {
 
@@ -94,16 +87,16 @@ public class App implements Serializable {
     public static void menu(boolean admin) {
         String extension = "";
         if (admin) {
-            extension = ", (4) create a movie";
+            extension = ", (5) create a movie";
         }
         System.out.println(chooseSentence
-                + "(1) list all the movies, (2) search for a movie by title, (3) list all of your favourite movies"
+                + "(1) list all the movies, (2) search for a movie by title, (3) list all of your favourite movies, (4) list all the seen movies"
                 + extension);
         int choice = scannerInt(scanner);
         if (choice == 1) {
-            System.out.println("Enter the number of the coresponding movie: ");
+            System.out.println("If you want to select the movie enter the corresponding number: ");
             database.listMovies();
-            Movie movie = database.selectMovie(scannerInt(scanner));
+            Movie movie = database.selectMovie(scannerInt(scanner) - 1);
             movieMenu(movie);
         } else if (choice == 2) {
             System.out.println("Enter the title of movie you want to search for: ");
@@ -116,21 +109,22 @@ public class App implements Serializable {
             }
         } else if (choice == 3) {
             System.out.println(
-                    "This is your favourite list. You can play a movie by typing the coresponding number or you can go back by typing the number 0");
+                    "This is your favourite list. You can enter the corresponding number to select the movie: ");
             currentUser.listFavourites();
             int input = scannerInt(scanner);
-            if (input == 0) {
-                menu(currentUser.isAdmin());
-            } else {
-                Movie selectedMovie = currentUser.getFavouriteList().get(input - 1);
-                selectedMovie.playMovie();
-                currentUser.addSeenMovie(selectedMovie);
-                goBack();
-            }
+
+            Movie selectedMovie = currentUser.getFavouriteList().get(input - 1);
+            movieMenu(selectedMovie);
+
+        } else if (choice == 4) {
+            System.out.println("If you want to select the movie enter the corresponding number: ");
+            currentUser.listSeenMovies();
+            Movie movie = database.selectMovie(scannerInt(scanner) - 1);
+            movieMenu(movie);
         } else {
 
             if (currentUser.isAdmin()) {
-                if (choice == 4) {
+                if (choice == 5) {
                     createMovie();
                     menu(currentUser.isAdmin());
                 } else {
@@ -175,39 +169,46 @@ public class App implements Serializable {
         return characters;
     }
 
-    public static void updateMovie() {
-
-    }
-
     public static void clear() {
+
         System.out.print("Everything on the console will cleared");
         System.out.print("\033[H\033[2J");
         System.out.flush();
+
     }
 
     public static void movieMenu(Movie movie) {
-        System.out.println(chooseSentence + "(1) play " + movie.getTitle() + ", (2) add " + movie.getTitle()
-                + " to your favourite list");
-        int choice = scannerInt(scanner);
-        if (choice == 1) {
-            movie.playMovie();
-            currentUser.addSeenMovie(movie);
-            goBack();
 
-        } else if (choice == 2) {
-            currentUser.addToFavouriteList(movie);
-            menu(currentUser.isAdmin());
-        }
-    }
-
-    public static void goBack() {
-        System.out.println("Enter the letter Q to go back to the main menu");
-        if (scannerString(scanner).equalsIgnoreCase("q")) {
-            menu(currentUser.isAdmin());
+        if (currentUser.getFavouriteList().contains(movie)) {
+            System.out.println(chooseSentence + "(1) play " + movie.getTitle() + ", (2) remove " + movie.getTitle()
+                    + " from your favourite list");
+            int choice = scannerInt(scanner);
+            if (choice == 1) {
+                movie.playMovie();
+                System.out.println("Rate this movie 1 to 5: ");
+                currentUser.addSeenMovie(movie, scannerInt(scanner));
+                menu(currentUser.isAdmin());
+            } else if (choice == 2) {
+                currentUser.removeFavouriteList(movie);
+                menu(currentUser.isAdmin());
+            }
         } else {
-            incorrectInput("input");
-            goBack();
+
+            System.out.println(chooseSentence + "(1) play " + movie.getTitle() + ", (2) add " + movie.getTitle()
+                    + " to your favourite list");
+            int choice = scannerInt(scanner);
+            if (choice == 1) {
+                movie.playMovie();
+                System.out.println("Rate this movie 1 to 5: ");
+                currentUser.addSeenMovie(movie, scannerInt(scanner));
+                menu(currentUser.isAdmin());
+            } else if (choice == 2) {
+                currentUser.addToFavouriteList(movie);
+                menu(currentUser.isAdmin());
+            }
+
         }
+
     }
 
     public static void listFavouriteList() {
@@ -216,12 +217,23 @@ public class App implements Serializable {
 
     public static String scannerString(Scanner scanner2) {
         String input = scanner2.nextLine();
-        /*
-         * if (input.equalsIgnoreCase("q")) { System.out.println("Saving...");
-         * save(database); clear(); System.exit(0);
-         * 
-         * }
-         */
+
+        int intInput = 1;
+        try {
+            intInput = Integer.parseInt(input);
+        } catch (Exception e) {
+
+        }
+        if (input.equalsIgnoreCase("q")) {
+            System.out.println("Saving...");
+            save(database);
+            clear();
+            System.exit(0);
+
+        } else if (intInput == 0) {
+            menu(currentUser.isAdmin());
+        }
+
         return input;
     }
 
@@ -229,13 +241,26 @@ public class App implements Serializable {
         String input = scanner.nextLine(); // the reason why I'm using the nextLine() and then parsing it to integer and
                                            // not nextInt() is that nextInt() causes problems with leftover \n (enters)
                                            // and messes up the inputs
-        /*
-         * if (input.equalsIgnoreCase("q")) { System.out.println("Saving...");
-         * save(database); clear(); System.exit(0);
-         * 
-         * }
-         */
-        return Integer.parseInt(input);
+        if (input.equalsIgnoreCase("q")) {
+            System.out.println("Saving...");
+            save(database);
+            clear();
+            System.exit(0);
+
+        }
+        int intInput = 1;
+        try {
+            intInput = Integer.parseInt(input);
+        } catch (NumberFormatException e) {
+            System.out.println(
+                    "Error: listen here you dumb ass, the input should have been a number and not the gibberish that you entered");
+            menu(currentUser.isAdmin());
+        }
+        if (intInput == 0) {
+            menu(currentUser.isAdmin());
+        }
+
+        return intInput;
     }
 
     public static void incorrectInput(String input) {

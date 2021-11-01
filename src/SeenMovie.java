@@ -5,11 +5,11 @@ public class SeenMovie extends Movie {
 
     // Attributes
     private Date date;
-    private double rating;
+    private int rating;
 
     // Constructor
     public SeenMovie(String title, int productionYear, String description, ArrayList<Character> characters, Date date,
-            double rating) {
+            int rating) {
         super(title, productionYear, description, characters);
         this.date = date;
         this.rating = rating;
@@ -20,11 +20,11 @@ public class SeenMovie extends Movie {
         return this.date;
     }
 
-    public double getRating() {
+    public int getRating() {
         return this.rating;
     }
 
-    public void setRating(double rating) {
+    public void setRating(int rating) {
         this.rating = rating;
     }
 

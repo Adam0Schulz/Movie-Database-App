@@ -1,12 +1,12 @@
 import java.util.ArrayList;
+import java.util.Date;
 import java.io.Serializable;
 
 public class User implements Serializable {
     private String username;
     private String password;
     private ArrayList<Movie> favouriteList = new ArrayList<Movie>();
-    private ArrayList<Movie> seenMovies = new ArrayList<Movie>();
-    private ArrayList<Movie> ratedMovies = new ArrayList<Movie>();
+    private ArrayList<SeenMovie> seenMovies = new ArrayList<SeenMovie>();
     private boolean admin;
 
     public User(String username, String password) {
@@ -32,8 +32,8 @@ public class User implements Serializable {
     }
 
     public void listFavourites() {
-        for (int i = 1; i < favouriteList.size(); i++) {
-            System.out.println(i + favouriteList.get(i - 1).getTitle());
+        for (int i = 1; i <= favouriteList.size(); i++) {
+            System.out.println(i + ": " + favouriteList.get(i - 1).getTitle());
         }
 
     }
@@ -46,20 +46,34 @@ public class User implements Serializable {
         this.favouriteList.remove(movie);
     }
 
-    public ArrayList<Movie> getSeenMovies() {
+    public ArrayList<SeenMovie> getSeenMovies() {
         return this.seenMovies;
     }
 
-    public void addSeenMovie(Movie seenMovie) {
-        this.seenMovies.add(seenMovie);
+    public void listSeenMovies() {
+        for (int i = 1; i <= seenMovies.size(); i++) {
+            System.out.println(i + ": " + seenMovies.get(i - 1).getTitle());
+        }
     }
 
-    public ArrayList<Movie> getRatedMovies() {
-        return this.ratedMovies;
-    }
+    public void addSeenMovie(Movie movie, int rating) {
+        this.seenMovies.add(new SeenMovie(movie.getTitle(), movie.getProductionYear(), movie.getGenre(),
+                movie.getCharacters(), new Date(), rating));
+        SeenMovie movieToBeDeleted = null;
+        boolean doAgain = true;
+        for (SeenMovie seenMovie : seenMovies) {
+            if (doAgain) {
+                if (movie.getTitle().equals(seenMovie.getTitle())) {
+                    movieToBeDeleted = seenMovie;
+                }
+                doAgain = false;
+            }
 
-    public void addRatedMovie(Movie ratedMovie) {
-        this.ratedMovies.add(ratedMovie);
+        }
+        if (movieToBeDeleted != null) {
+            seenMovies.remove(movieToBeDeleted);
+        }
+
     }
 
     public boolean isAdmin() {

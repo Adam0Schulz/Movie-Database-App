@@ -22,8 +22,8 @@ public class Database implements Serializable {
     }
 
     public void listMovies() {
-        for (int i = 0; i < movies.size(); i++) {
-            System.out.println(i + movies.get(i).getTitle());
+        for (int i = 1; i <= movies.size(); i++) {
+            System.out.println(i + ": " + movies.get(i - 1).getTitle());
         }
 
     }
