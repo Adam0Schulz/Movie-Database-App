@@ -199,7 +199,7 @@ public class App implements Serializable {
             return characters;
         } else {
             String[] attributes = input.split(" as ", 2);
-            Character character = new Character(attributes[0], attributes[1]);
+            Character character = new Character(attributes[1], attributes[0]);
             characters.add(character);
 
             characterInsertion(scannerString(scanner), characters);
