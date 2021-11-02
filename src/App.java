@@ -89,15 +89,13 @@ public class App implements Serializable {
             System.out.println(
                     "This is your favourite list. You can enter the corresponding number to select the movie: ");
             currentUser.listFavourites();
-            int input = scannerInt(scanner);
-
-            Movie selectedMovie = currentUser.getFavouriteList().get(input - 1);
+            Movie selectedMovie = currentUser.getFavouriteList().get(scannerInt(scanner) - 1);
             movieMenu(selectedMovie);
 
         } else if (choice == 4) {
             System.out.println("If you want to select the movie enter the corresponding number: ");
             currentUser.listSeenMovies();
-            Movie movie = database.selectMovie(scannerInt(scanner) - 1);
+            Movie movie = currentUser.getSeenMovies().get(scannerInt(scanner) - 1);
             movieMenu(movie);
         } else {
 

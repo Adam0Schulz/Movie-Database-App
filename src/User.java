@@ -53,7 +53,7 @@ public class User implements Serializable {
     public void listSeenMovies() {
         for (int i = 1; i <= seenMovies.size(); i++) {
             System.out.println(i + ": " + seenMovies.get(i - 1).getTitle() + " - " + seenMovies.get(i - 1).getDate()
-                    + " - " + seenMovies.get(i - 1).getRating());
+                    + " - " + seenMovies.get(i - 1).getRating() + "/5 stars");
         }
     }
 
