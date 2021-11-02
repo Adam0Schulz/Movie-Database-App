@@ -5,6 +5,8 @@ Notes for later
 5. divide methods across classes if it makes sense
 6. have as little methods in App class as possible
 9. be able to search for a movie by all of it's attributes
+- complete the createMovie()
+-
 */
 
 import java.util.ArrayList;
@@ -183,22 +185,24 @@ public class App implements Serializable {
         int year = scannerInt(scanner);
         System.out.println("Enter all of one/multiple genres separated by a space: ");
         String genre = scannerString(scanner);
-        System.out
-                .println("Enter characters one by one in this format (role - actor) and when you're done enter done: ");
+        System.out.println(
+                "Enter characters one by one in this format (actor as role) and when you're done enter done: ");
         ArrayList<Character> characters = new ArrayList<Character>();
-        thingyThatWeWillCallLater(scannerString(scanner), characters);
+        characters = characterInsertion(scannerString(scanner), characters);
+        Movie movie = new Movie(title, year, genre, characters);
+        database.addMovie(movie);
         System.out.println("Movie has been added to the database");
     }
 
-    public static ArrayList<Character> thingyThatWeWillCallLater(String input, ArrayList<Character> characters) {
+    public static ArrayList<Character> characterInsertion(String input, ArrayList<Character> characters) {
         if (input.equals("done")) {
             return characters;
         } else {
-            String[] attributes = input.split(" - ", 2);
+            String[] attributes = input.split(" as ", 2);
             Character character = new Character(attributes[0], attributes[1]);
             characters.add(character);
 
-            thingyThatWeWillCallLater(scannerString(App.scanner), characters);
+            characterInsertion(scannerString(scanner), characters);
         }
         return characters;
     }
@@ -212,37 +216,87 @@ public class App implements Serializable {
     }
 
     public static void movieMenu(Movie movie) {
-
-        if (currentUser.getFavouriteList().contains(movie)) {
-            System.out.println(chooseSentence + "(1) play " + movie.getTitle() + ", (2) remove " + movie.getTitle()
-                    + " from your favourite list");
-            int choice = scannerInt(scanner);
-            if (choice == 1) {
-                movie.playMovie();
-                System.out.println("Rate this movie 1 to 5: ");
-                currentUser.addSeenMovie(movie, scannerInt(scanner));
-                menu(currentUser.isAdmin());
-            } else if (choice == 2) {
-                currentUser.removeFavouriteList(movie);
-                menu(currentUser.isAdmin());
-            }
-        } else {
-
-            System.out.println(chooseSentence + "(1) play " + movie.getTitle() + ", (2) add " + movie.getTitle()
-                    + " to your favourite list");
-            int choice = scannerInt(scanner);
-            if (choice == 1) {
-                movie.playMovie();
-                System.out.println("Rate this movie 1 to 5: ");
-                currentUser.addSeenMovie(movie, scannerInt(scanner));
-                menu(currentUser.isAdmin());
-            } else if (choice == 2) {
-                currentUser.addToFavouriteList(movie);
-                menu(currentUser.isAdmin());
-            }
-
+        String adminOptions = "";
+        String favouriteOption = ", (2) add " + movie.getTitle() + " from your favourite list";
+        boolean admin = currentUser.isAdmin();
+        boolean favourite = currentUser.getFavouriteList().contains(movie);
+        if (admin) {
+            adminOptions = ", (3) update " + movie.getTitle() + ", (4) remove " + movie.getTitle();
+        }
+        if (favourite) {
+            favouriteOption = ", (2) remove " + movie.getTitle() + " from your favourite list";
         }
 
+        System.out.println(chooseSentence + "(1) play " + movie.getTitle() + favouriteOption + adminOptions);
+        int choice = scannerInt(scanner);
+        if (choice == 1) {
+            movie.playMovie();
+            System.out.println("Rate this movie 1 to 5: ");
+            currentUser.addSeenMovie(movie, scannerInt(scanner));
+            menu(currentUser.isAdmin());
+        } else if (choice == 2 && favourite) {
+            currentUser.removeFavouriteList(movie);
+            menu(currentUser.isAdmin());
+        } else if (choice == 2 && !favourite) {
+
+        } else if (choice == 3 && admin) {
+            updateMovie(movie);
+        } else if (choice == 4 && admin) {
+            removeMovie(movie);
+        } else {
+            incorrectInput("choice");
+            movieMenu(movie);
+        }
+
+    }
+
+    public static void updateMovie(Movie movie) {
+        System.out.println(
+                "Please select the attribute that you want to update:\n1: Title\n2: Production year\n3: Genre\n4: Characters");
+        int choice = scannerInt(scanner);
+        if (choice == 1) {
+            System.out.println("Current title: " + movie.getTitle());
+            System.out.println("Enter the new title: ");
+            String newTitle = scannerString(scanner);
+            movie.setTitle(newTitle);
+            System.out.println("Title has been updated");
+            menu(currentUser.isAdmin());
+        } else if (choice == 2) {
+            System.out.println("Current year of production: " + movie.getProductionYear());
+            System.out.println("Enter the new year of production: ");
+            int newYear = scannerInt(scanner);
+            movie.setProductionYear(newYear);
+            System.out.println("Year of production has been updated");
+            menu(currentUser.isAdmin());
+        } else if (choice == 3) {
+            System.out.println("Current genre/genres: " + movie.getGenre());
+            System.out.println("Enter the new genre/genres (separated by a space): ");
+            String newGenre = scannerString(scanner);
+            movie.setGenre(newGenre);
+            System.out.println("Genre has been updated");
+            menu(currentUser.isAdmin());
+        } else if (choice == 4) {
+            System.out.println("Please select a character to update: ");
+            for (int i = 1; i <= movie.getCharacters().size(); i++) {
+                System.out.println(i + ": " + movie.getCharacters().get(i - 1));
+            }
+            int subChoice = scannerInt(scanner);
+            System.out.println("Current character: " + movie.getCharacters().get(subChoice - 1));
+            String input = scannerString(scanner);
+            String[] attributes = input.split(" as ", 2);
+            movie.getCharacters().get(subChoice - 1).setActor(attributes[0]);
+            movie.getCharacters().get(subChoice - 1).setRole(attributes[1]);
+            System.out.println("Character has been updated");
+            menu(currentUser.isAdmin());
+        } else {
+            incorrectInput("choice");
+            updateMovie(movie);
+        }
+    }
+
+    public static void removeMovie(Movie movie) {
+        database.removeMovie(movie);
+        menu(currentUser.isAdmin());
     }
 
     public static void listFavouriteList() {
