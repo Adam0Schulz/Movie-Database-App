@@ -164,7 +164,7 @@ public class App implements Serializable {
             for (int i = 1; i <= selectedMovies.size(); i++) {
                 Movie singleMovie = (Movie) selectedMovies.get(i - 1).get(0);
                 Character singleCharacter = (Character) selectedMovies.get(i - 1).get(1);
-                System.out.println(i + ": " + singleMovie.getTitle() + " as " + singleCharacter.getRole());
+                System.out.println(i + ": " + singleMovie.getTitle() + ", " + singleCharacter);
             }
             Movie movie = (Movie) selectedMovies.get(scannerInt(scanner) - 1).get(0);
             movieMenu(movie);

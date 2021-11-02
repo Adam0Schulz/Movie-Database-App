@@ -92,7 +92,7 @@ public class Database implements Serializable {
         ArrayList<ArrayList<Object>> array = new ArrayList<ArrayList<Object>>();
         for (Movie movie : movies) {
             for (Character character : movie.getCharacters()) {
-                if (character.getActor().toLowerCase().equalsIgnoreCase(actor.toLowerCase())) {
+                if (character.getActor().toLowerCase().contains(actor.toLowerCase())) {
                     ArrayList<Object> subArray = new ArrayList<Object>();
                     subArray.add(movie);
                     subArray.add(character);

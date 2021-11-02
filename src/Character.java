@@ -30,7 +30,7 @@ public class Character implements Serializable {
     }
 
     public String toString() {
-        return role + " - " + actor;
+        return actor + " as " + role;
     }
 
 }
