@@ -49,13 +49,58 @@ public class Database implements Serializable {
         return null;
     }
 
-    public Movie searchForMovie(String movieTitle) {
+    public ArrayList<Movie> searchForMovieByTitle(String movieTitle) {
+        ArrayList<Movie> array = new ArrayList<Movie>();
         for (Movie movie : movies) {
-            if (movie.getTitle().equals(movieTitle)) {
-                return movie;
+            if (movie.getTitle().toLowerCase().contains(movieTitle.toLowerCase())) {
+                array.add(movie);
             }
         }
-        return null;
+        return array;
+    }
+
+    public ArrayList<Movie> searchForMovieByYear(int year, boolean from) {
+        ArrayList<Movie> array = new ArrayList<Movie>();
+        if (from) {
+            for (Movie movie : movies) {
+                if (movie.getProductionYear() > year) {
+                    array.add(movie);
+                }
+            }
+            return array;
+        } else {
+            for (Movie movie : movies) {
+                if (movie.getProductionYear() < year) {
+                    array.add(movie);
+                }
+            }
+            return array;
+        }
+    }
+
+    public ArrayList<Movie> searchForMovieByGenre(String genre) {
+        ArrayList<Movie> array = new ArrayList<Movie>();
+        for (Movie movie : movies) {
+            if (movie.getGenre().toLowerCase().contains(genre.toLowerCase())) {
+                array.add(movie);
+            }
+        }
+        return array;
+    }
+
+    public ArrayList<ArrayList<Object>> searchForMovieByActor(String actor) {
+        ArrayList<ArrayList<Object>> array = new ArrayList<ArrayList<Object>>();
+        for (Movie movie : movies) {
+            for (Character character : movie.getCharacters()) {
+                if (character.getActor().toLowerCase().equalsIgnoreCase(actor.toLowerCase())) {
+                    ArrayList<Object> subArray = new ArrayList<Object>();
+                    subArray.add(movie);
+                    subArray.add(character);
+                    array.add(subArray);
+                }
+            }
+        }
+        return array;
     }
 
     @Override
