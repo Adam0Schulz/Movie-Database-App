@@ -52,27 +52,14 @@ public class User implements Serializable {
 
     public void listSeenMovies() {
         for (int i = 1; i <= seenMovies.size(); i++) {
-            System.out.println(i + ": " + seenMovies.get(i - 1).getTitle());
+            System.out.println(i + ": " + seenMovies.get(i - 1).getTitle() + " - " + seenMovies.get(i - 1).getDate()
+                    + " - " + seenMovies.get(i - 1).getRating());
         }
     }
 
     public void addSeenMovie(Movie movie, int rating) {
         this.seenMovies.add(new SeenMovie(movie.getTitle(), movie.getProductionYear(), movie.getGenre(),
                 movie.getCharacters(), new Date(), rating));
-        SeenMovie movieToBeDeleted = null;
-        boolean doAgain = true;
-        for (SeenMovie seenMovie : seenMovies) {
-            if (doAgain) {
-                if (movie.getTitle().equals(seenMovie.getTitle())) {
-                    movieToBeDeleted = seenMovie;
-                }
-                doAgain = false;
-            }
-
-        }
-        if (movieToBeDeleted != null) {
-            seenMovies.remove(movieToBeDeleted);
-        }
 
     }
 

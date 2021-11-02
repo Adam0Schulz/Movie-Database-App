@@ -15,8 +15,7 @@ import java.io.*;
 
 public class App implements Serializable {
 
-    // static Database database = new Database();
-    static Database database = load("database.ser");
+    static Database database = DatabaseConn.load("database.ser");
     static String chooseSentence = "Please choose one of the following options:";
     static User currentUser;
     static Scanner scanner = new Scanner(System.in); // opening the scanner but not closing it (intentionally) because
@@ -24,28 +23,6 @@ public class App implements Serializable {
 
     public static void main(String[] args) throws Exception {
 
-        // addition of the first two movies
-        /*
-         * ArrayList<Character> characters = new ArrayList<Character>();
-         * characters.add(new Character("Teddy Adams", "Allen C. Gardner"));
-         * characters.add(new Character("Lloyd Gibbard", "Drew Smith"));
-         * characters.add(new Character("Hailey Emerson", "Hayden Blane"));
-         * characters.add(new Character("Lisa Lane", "Alexis Boozer Sterling"));
-         * database.addMovie(new Movie("Being Awesome", 2014, "drama", characters));
-         * characters = new ArrayList<Character>(); characters.add(new
-         * Character("Stephen", "Stephen Dypiangco")); characters.add(new
-         * Character("Patrick", "Patrick Epino")); characters.add(new
-         * Character("Tamlyn", "Tamlyn Tomito")); characters.add(new Character("Al",
-         * "Al Leong")); database.addMovie(new Movie("Awesome Asian Bad Guys", 2014,
-         * "comedy action", characters));
-         */
-        // addition of admin user
-        /*
-         * User admin = new User("admin", "Admin123"); admin.makeAdmin();
-         * database.addUser(admin);
-         * 
-         * database.addUser(new User("Babak", "kebab")); save(database);
-         */
         // System.out.println(database.getMovies().get(0).getTitle());
         // System.out.println(database.getUsers().get(1).getUsername());
         start();
@@ -227,7 +204,7 @@ public class App implements Serializable {
         }
         if (input.equalsIgnoreCase("q")) {
             System.out.println("Saving...");
-            save(database);
+            DatabaseConn.save(database);
             clear();
             System.exit(0);
 
@@ -244,7 +221,7 @@ public class App implements Serializable {
                                            // and messes up the inputs
         if (input.equalsIgnoreCase("q")) {
             System.out.println("Saving...");
-            save(database);
+            DatabaseConn.save(database);
             clear();
             System.exit(0);
 
@@ -268,33 +245,4 @@ public class App implements Serializable {
         System.out.println("Incorrect " + input + ". Please try again.");
     }
 
-    public static void save(Database database) {
-        try {
-            FileOutputStream fileOut = new FileOutputStream("database.ser");
-            ObjectOutputStream out = new ObjectOutputStream(fileOut);
-            out.writeObject(database);
-            out.close();
-            fileOut.close();
-            System.out.printf("Serialized data is saved in database.ser");
-        } catch (IOException i) {
-            i.printStackTrace();
-        }
-    }
-
-    public static Database load(String file) {
-        Database database = null;
-        try {
-            FileInputStream filein = new FileInputStream(file);
-            ObjectInputStream in = new ObjectInputStream(filein);
-            database = (Database) in.readObject();
-            in.close();
-            filein.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException c) {
-            c.printStackTrace();
-        }
-        return database;
-
-    }
 }
