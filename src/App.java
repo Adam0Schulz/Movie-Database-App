@@ -4,9 +4,6 @@ Notes for later
 4. divide methods into smaller ones if it makes sense
 5. divide methods across classes if it makes sense
 6. have as little methods in App class as possible
-9. be able to search for a movie by all of it's attributes
-- complete the createMovie()
--
 */
 
 import java.util.ArrayList;
