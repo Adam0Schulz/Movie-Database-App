@@ -28,6 +28,14 @@ public class Database implements Serializable {
 
     }
 
+    public ArrayList<String> getMovieTitles() {
+        ArrayList<String> titles = new ArrayList<String>();
+        for (Movie movie : movies) {
+            titles.add(movie.getTitle());
+        }
+        return titles;
+    }
+
     public Movie selectMovie(int index) {
         return movies.get(index);
     }

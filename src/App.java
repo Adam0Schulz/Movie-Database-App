@@ -70,11 +70,14 @@ public class App implements Serializable {
         // ********************** I got here *********************
 
         if (choice == 1) {
-            System.out.println("If you want to select the movie enter the corresponding number: ");
-            database.listMovies();
-            Movie movie = database.selectMovie(scannerInt(scanner) - 1);
-
-            int index = Screen.enter("");
+            /*
+             * System.out.
+             * println("If you want to select the movie enter the corresponding number: ");
+             * database.listMovies(); Movie movie = database.selectMovie(scannerInt(scanner)
+             * - 1);
+             */
+            int subChoice = Screen.choice(database.getMovieTitles(), "movies");
+            Movie movie = database.selectMovie(subChoice);
             movieMenu(movie);
         } else if (choice == 2) {
             searchMenu();

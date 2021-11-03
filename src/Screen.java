@@ -102,8 +102,9 @@ public class Screen {
 
     // Choosing one of the following
     public static int choice(ArrayList<String> options) {
+        System.out.println(chooseSentence);
         for (int i = 1; i < options.size(); i++) {
-            System.out.print("(" + i + ") " + options.get(i - 1) + ", ");
+            System.out.println("(" + i + ") " + options.get(i - 1) + ", ");
         }
         int choice = scanInt(scanner);
         return choice;
