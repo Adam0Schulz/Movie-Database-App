@@ -5,9 +5,22 @@ Questions about UML
 -   How in-depth should we go with the use cases (use case diagram)
 -   
 
-Source code to do list
--   make the commands consistent
--   divide methods into smaller ones if it makes sense
--   divide methods across classes if it makes sense
--   have as little methods in App class as possible
--   in the updateMovie method add a request for inputing a new character
+To do list
+-   adam
+    -   clean up the code
+    - in the updateMovie method add a request for inputing a new character
+
+-   simona
+    -   use case description
+    -   logo
+    -   find how to generate class diagram from src
+    -   take a nap
+
+-   babak
+    -   add movies
+
+-   unasigned
+    -   sequence diagram - Thursday together
+    -   class diagram 
+    -   presentation - Monday
+
