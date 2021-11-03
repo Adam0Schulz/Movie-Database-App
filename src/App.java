@@ -227,7 +227,8 @@ public class App implements Serializable {
             currentUser.removeFavouriteList(movie);
             menu(currentUser.isAdmin());
         } else if (choice == 2 && !favourite) {
-
+            currentUser.addToFavouriteList(movie);
+            menu(currentUser.isAdmin());
         } else if (choice == 3 && admin) {
             updateMovie(movie);
         } else if (choice == 4 && admin) {
