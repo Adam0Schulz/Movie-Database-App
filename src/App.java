@@ -12,11 +12,11 @@ import java.io.*;
 
 public class App implements Serializable {
 
-    static Database database = DatabaseConn.load("database.ser");
-    static String chooseSentence = "Please choose one of the following options:";
-    static User currentUser;
-    static Scanner scanner = new Scanner(System.in); // opening the scanner but not closing it (intentionally) because
-                                                     // it causes problems when there are multiple uses of a scanner
+    private static Database database = DatabaseConn.load("database.ser");
+    private static User currentUser;
+
+    // opening the scanner but not closing it (intentionally) because
+    // it causes problems when there are multiple uses of a scanner
 
     public static void main(String[] args) throws Exception {
 
@@ -27,31 +27,27 @@ public class App implements Serializable {
     }
 
     public static void start() {
-        System.out.println(
-                "\nWelcome to our awesome movie database thingy app. Enjoy yourself on your journey through this awesomeness!!!");
-        System.out.println(
-                "Anytime you feel like you had enough of this awesomeness press Q to awesome save and exit in style\n");
+        Screen.welcome();
         login();
     }
 
     public static void login() {
-        System.out.println("Please enter your username: ");
-        String username = scannerString(scanner);
+
+        String username = Screen.enter("your username");
         currentUser = database.searchForUser(username);
+
         if (currentUser == null) {
-            System.out
-                    .println("Your have not created an account yet. In order to create an account create a password.");
-            String password = scannerString(scanner);
+            Screen.noAccount();
+            String password = Screen.enter("your password");
             database.addUser(new User(username, password));
             currentUser = database.searchForUser(username);
             menu(currentUser.isAdmin());
         } else {
-            System.out.println("Please enter your password: ");
-            String password = scannerString(scanner);
+            String password = Screen.enter("your password");
             if (currentUser.passwordValidation(password)) {
                 menu(currentUser.isAdmin());
             } else {
-                incorrectInput("password");
+                Screen.incorrectInput("password");
                 login();
             }
 
@@ -60,18 +56,25 @@ public class App implements Serializable {
     }
 
     public static void menu(boolean admin) {
-        String extension = "";
+
+        ArrayList<String> options = new ArrayList<String>();
+        options.add("list all the movie");
+        options.add("search for a movie");
+        options.add("list all of your favourite movies");
+        options.add("see your history");
         if (admin) {
-            extension = ", (5) create a movie";
+            options.add("create a movie");
         }
-        System.out.println(chooseSentence
-                + "(1) list all the movies, (2) search for a movie, (3) list all of your favourite movies, (4) see your history"
-                + extension);
-        int choice = scannerInt(scanner);
+        int choice = Screen.choice(options);
+
+        // ********************** I got here *********************
+
         if (choice == 1) {
             System.out.println("If you want to select the movie enter the corresponding number: ");
             database.listMovies();
             Movie movie = database.selectMovie(scannerInt(scanner) - 1);
+
+            int index = Screen.enter("");
             movieMenu(movie);
         } else if (choice == 2) {
             searchMenu();
@@ -204,14 +207,6 @@ public class App implements Serializable {
         return characters;
     }
 
-    public static void clear() {
-
-        System.out.print("Everything on the console will cleared");
-        System.out.print("\033[H\033[2J");
-        System.out.flush();
-
-    }
-
     public static void movieMenu(Movie movie) {
         String adminOptions = "";
         String favouriteOption = ", (2) add " + movie.getTitle() + " from your favourite list";
@@ -298,58 +293,6 @@ public class App implements Serializable {
 
     public static void listFavouriteList() {
         System.out.println("here is your list of your favourite movies");
-    }
-
-    public static String scannerString(Scanner scanner2) {
-        String input = scanner2.nextLine();
-
-        int intInput = 1;
-        try {
-            intInput = Integer.parseInt(input);
-        } catch (Exception e) {
-
-        }
-        if (input.equalsIgnoreCase("q")) {
-            System.out.println("Saving...");
-            DatabaseConn.save(database);
-            clear();
-            System.exit(0);
-
-        } else if (intInput == 0) {
-            menu(currentUser.isAdmin());
-        }
-
-        return input;
-    }
-
-    public static int scannerInt(Scanner scanner) {
-        String input = scanner.nextLine(); // the reason why I'm using the nextLine() and then parsing it to integer and
-                                           // not nextInt() is that nextInt() causes problems with leftover \n (enters)
-                                           // and messes up the inputs
-        if (input.equalsIgnoreCase("q")) {
-            System.out.println("Saving...");
-            DatabaseConn.save(database);
-            clear();
-            System.exit(0);
-
-        }
-        int intInput = 1;
-        try {
-            intInput = Integer.parseInt(input);
-        } catch (NumberFormatException e) {
-            System.out.println(
-                    "Error: listen here you dumb ass, the input should have been a number and not the gibberish that you entered");
-            menu(currentUser.isAdmin());
-        }
-        if (intInput == 0) {
-            menu(currentUser.isAdmin());
-        }
-
-        return intInput;
-    }
-
-    public static void incorrectInput(String input) {
-        System.out.println("Incorrect " + input + ". Please try again.");
     }
 
 }
