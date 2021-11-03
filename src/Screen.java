@@ -34,6 +34,10 @@ public class Screen {
         return scanString(scanner);
     }
 
+    public static int enterInt(String info) {
+        return Integer.parseInt(enter(info));
+    }
+
     // Handeling the scanner input methods
     public static String scanString(Scanner scanner) {
         String input = scanner.nextLine();
@@ -104,9 +108,9 @@ public class Screen {
     public static int choice(ArrayList<String> options) {
         System.out.println(chooseSentence);
         for (int i = 1; i < options.size(); i++) {
-            System.out.println("(" + i + ") " + options.get(i - 1) + ", ");
+            System.out.println(i + ": " + options.get(i - 1) + ", ");
         }
-        int choice = scanInt(scanner);
+        int choice = scanInt(scanner) - 1;
         return choice;
     }
 

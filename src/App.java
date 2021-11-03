@@ -1,10 +1,3 @@
-/*
-Notes for later
-3. make the commands consistent
-4. divide methods into smaller ones if it makes sense
-5. divide methods across classes if it makes sense
-6. have as little methods in App class as possible
-*/
 
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -38,9 +31,7 @@ public class App implements Serializable {
 
         if (currentUser == null) {
             Screen.noAccount();
-            String password = Screen.enter("your password");
-            database.addUser(new User(username, password));
-            currentUser = database.searchForUser(username);
+            registration(username);
             menu(currentUser.isAdmin());
         } else {
             String password = Screen.enter("your password");
@@ -55,81 +46,94 @@ public class App implements Serializable {
 
     }
 
+    public static void registration(String username) {
+        String password = Screen.enter("your password");
+        database.addUser(new User(username, password));
+        currentUser = database.searchForUser(username);
+    }
+
     public static void menu(boolean admin) {
 
         ArrayList<String> options = new ArrayList<String>();
-        options.add("list all the movie");
-        options.add("search for a movie");
-        options.add("list all of your favourite movies");
-        options.add("see your history");
+        options.add("List all the movie");
+        options.add("Search for a movie");
+        options.add("List all of your favourite movies");
+        options.add("See your history");
         if (admin) {
             options.add("create a movie");
         }
         int choice = Screen.choice(options);
 
-        // ********************** I got here *********************
-
         if (choice == 1) {
-            /*
-             * System.out.
-             * println("If you want to select the movie enter the corresponding number: ");
-             * database.listMovies(); Movie movie = database.selectMovie(scannerInt(scanner)
-             * - 1);
-             */
-            int subChoice = Screen.choice(database.getMovieTitles(), "movies");
-            Movie movie = database.selectMovie(subChoice);
-            movieMenu(movie);
-        } else if (choice == 2) {
-            searchMenu();
-        } else if (choice == 3) {
-            System.out.println(
-                    "This is your favourite list. You can enter the corresponding number to select the movie: ");
-            currentUser.listFavourites();
-            Movie selectedMovie = currentUser.getFavouriteList().get(scannerInt(scanner) - 1);
-            movieMenu(selectedMovie);
 
-        } else if (choice == 4) {
-            System.out.println("If you want to select the movie enter the corresponding number: ");
-            currentUser.listSeenMovies();
-            Movie movie = currentUser.getSeenMovies().get(scannerInt(scanner) - 1);
-            movieMenu(movie);
+            SelectMovie(database.getMovies());
+
+        } else if (choice == 2) {
+
+            searchMenu();
+
+        } else if (choice == 3) {
+
+            SelectMovie(currentUser.getFavouriteList());
+
+        } else if (choice == 4 && admin) {
+
+            SelectMovie(currentUser.getSeenMovies());
+
         } else {
 
-            if (currentUser.isAdmin()) {
-                if (choice == 5) {
-                    createMovie();
-                    menu(currentUser.isAdmin());
-                } else {
-                    incorrectInput("choice");
-                    menu(currentUser.isAdmin());
-                }
-            } else {
-                incorrectInput("choice");
-                menu(currentUser.isAdmin());
-            }
+            Screen.incorrectInput("choice");
+            menu(admin);
 
         }
-        // print out the prompt to choose between list movies, search for a movie and
-        // list your favourite list, and calls according methods.
+    }
+
+    public static ArrayList<String> titles(ArrayList<Movie> array) {
+        ArrayList<String> titles = new ArrayList<>();
+        for (Movie movie : array) {
+            titles.add(movie.getTitle());
+        }
+        return titles;
+    }
+
+    public static void SelectMovie(ArrayList array) {
+        try {
+            ArrayList<Movie> movieArray = (ArrayList<Movie>) array;
+            int subChoice = Screen.choice(titles(movieArray));
+            Movie movie = movieArray.get(subChoice);
+            movieMenu(movie);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("there is a type casting problem in selectMovie");
+        }
+
     }
 
     public static void searchMenu() {
-        System.out.println("Select a search criteria\n1: Title\n2: Production year\n3: Genre\n4: Actor");
-        int choice = scannerInt(scanner);
-        if (choice == 1) {
-            System.out.println("Please enter title of the movie you want to search for: ");
-            ArrayList<Movie> selectedMovies = database.searchForMovieByTitle(scannerString(scanner));
-            for (int i = 1; i <= selectedMovies.size(); i++) {
-                System.out.println(i + ": " + selectedMovies.get(i - 1).getTitle());
 
-            }
-            Movie movie = selectedMovies.get(scannerInt(scanner) - 1);
+        ArrayList<String> options = new ArrayList<String>();
+        options.add("Title");
+        options.add("Production year");
+        options.add("Genre");
+        options.add("Actor");
+
+        int choice = Screen.choice(options);
+        if (choice == 1) {
+            String keyword = Screen.enter("title of the movie");
+            ArrayList<Movie> selectedMovies = database.searchForMovieByTitle(keyword);
+            int subChoice = Screen.choice(titles(selectedMovies));
+            Movie movie = selectedMovies.get(subChoice);
             movieMenu(movie);
         } else if (choice == 2) {
-            System.out.println(
-                    "Select one of the following: (1) search for movies produced after a certain year, (2) search for movies produced before a certain year");
-            int input = scannerInt(scanner);
-            if (input == 1) {
+            ArrayList<String> subOptions = new ArrayList<String>();
+            subOptions.add("Search for movies produced after a certain year");
+            subOptions.add("Seach for movies produced before a certain year");
+
+            int subChoice = Screen.choice(subOptions);
+
+            /********************* I got here ***********************/
+
+            if (subChoice == 1) {
                 System.out.println("Enter the production year after which you want to display the movies: ");
                 ArrayList<Movie> selectedMovies = database.searchForMovieByYear(scannerInt(scanner), true);
                 for (int i = 1; i <= selectedMovies.size(); i++) {
@@ -138,7 +142,7 @@ public class App implements Serializable {
                 }
                 Movie movie = selectedMovies.get(scannerInt(scanner) - 1);
                 movieMenu(movie);
-            } else if (input == 2) {
+            } else if (subChoice == 2) {
                 System.out.println("Enter the production year before which you want to display the movies: ");
                 ArrayList<Movie> selectedMovies = database.searchForMovieByYear(scannerInt(scanner), false);
                 for (int i = 1; i <= selectedMovies.size(); i++) {
@@ -148,7 +152,7 @@ public class App implements Serializable {
                 Movie movie = selectedMovies.get(scannerInt(scanner) - 1);
                 movieMenu(movie);
             } else {
-                incorrectInput("choice");
+                Screen.incorrectInput("choice");
                 searchMenu();
             }
 
@@ -174,7 +178,7 @@ public class App implements Serializable {
             Movie movie = (Movie) selectedMovies.get(scannerInt(scanner) - 1).get(0);
             movieMenu(movie);
         } else {
-            incorrectInput("choice");
+            Screen.incorrectInput("choice");
             searchMenu();
         }
 

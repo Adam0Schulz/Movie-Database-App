@@ -38,6 +38,14 @@ public class User implements Serializable {
 
     }
 
+    public ArrayList<String> getFavouriteListTitles() {
+        ArrayList<String> titles = new ArrayList<String>();
+        for (Movie movie : favouriteList) {
+            titles.add(movie.getTitle());
+        }
+        return titles;
+    }
+
     public void addToFavouriteList(Movie movie) {
         this.favouriteList.add(movie);
     }
