@@ -1,11 +1,3 @@
-/*
-Notes for later
-3. make the commands consistent
-4. divide methods into smaller ones if it makes sense
-5. divide methods across classes if it makes sense
-6. have as little methods in App class as possible
-*/
-
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.io.*;
