@@ -28,4 +28,13 @@ public class SeenMovie extends Movie {
         this.rating = rating;
     }
 
+    public static ArrayList<String> toString(ArrayList<SeenMovie> array) {
+        ArrayList<String> seenMoviesArray = new ArrayList<String>();
+        for (SeenMovie seenMovie : array) {
+            seenMoviesArray
+                    .add(seenMovie.getTitle() + ", " + seenMovie.getDate() + ", " + seenMovie.getRating() + "/5 stars");
+        }
+        return seenMoviesArray;
+    }
+
 }

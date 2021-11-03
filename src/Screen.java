@@ -105,13 +105,39 @@ public class Screen {
     }
 
     // Choosing one of the following
-    public static int choice(ArrayList<String> options) {
-        System.out.println(chooseSentence);
-        for (int i = 1; i < options.size(); i++) {
+    public static void listOptions(ArrayList<String> options) {
+        for (int i = 1; i <= options.size(); i++) {
             System.out.println(i + ": " + options.get(i - 1) + ", ");
         }
+    }
+
+    public static int choice(ArrayList<String> options) {
+        System.out.println(chooseSentence);
+        listOptions(options);
         int choice = scanInt(scanner) - 1;
         return choice;
+    }
+
+    // this seem to be a useful function but I'm not sure about its placement
+    public static Object chooseListItem(ArrayList array) {
+        if (array.get(0) instanceof Movie) {
+            Movie movie;
+            int choice = choice(Movie.titles(array));
+            movie = (Movie) array.get(choice);
+            return movie;
+        } else if (array.get(0) instanceof SeenMovie) {
+            SeenMovie movie;
+            int choice = choice(SeenMovie.toString(array));
+            movie = (SeenMovie) array.get(choice);
+            return movie;
+        } else if (array.get(0) instanceof Character) {
+            Character character;
+            int choice = choice(Character.toString(array));
+            character = (Character) array.get(choice);
+            return character;
+        } else {
+            return null;
+        }
     }
 
     // Clearing the console - taken from the internet

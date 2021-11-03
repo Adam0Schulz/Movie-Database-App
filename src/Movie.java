@@ -63,4 +63,12 @@ public class Movie implements Serializable {
 
     }
 
+    public static ArrayList<String> titles(ArrayList<Movie> array) {
+        ArrayList<String> titles = new ArrayList<>();
+        for (Movie movie : array) {
+            titles.add(movie.getTitle());
+        }
+        return titles;
+    }
+
 }

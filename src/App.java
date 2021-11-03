@@ -66,7 +66,8 @@ public class App implements Serializable {
 
         if (choice == 1) {
 
-            SelectMovie(database.getMovies());
+            Movie movie = (Movie) Screen.chooseListItem(database.getMovies());
+            movieMenu(movie);
 
         } else if (choice == 2) {
 
@@ -74,11 +75,13 @@ public class App implements Serializable {
 
         } else if (choice == 3) {
 
-            SelectMovie(currentUser.getFavouriteList());
+            Movie movie = (Movie) Screen.chooseListItem(currentUser.getFavouriteList());
+            movieMenu(movie);
 
         } else if (choice == 4 && admin) {
 
-            SelectMovie(currentUser.getSeenMovies());
+            Movie movie = (Movie) Screen.chooseListItem(currentUser.getSeenMovies());
+            movieMenu(movie);
 
         } else {
 
@@ -88,26 +91,15 @@ public class App implements Serializable {
         }
     }
 
-    public static ArrayList<String> titles(ArrayList<Movie> array) {
-        ArrayList<String> titles = new ArrayList<>();
-        for (Movie movie : array) {
-            titles.add(movie.getTitle());
-        }
-        return titles;
-    }
-
-    public static void SelectMovie(ArrayList array) {
-        try {
-            ArrayList<Movie> movieArray = (ArrayList<Movie>) array;
-            int subChoice = Screen.choice(titles(movieArray));
-            Movie movie = movieArray.get(subChoice);
-            movieMenu(movie);
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("there is a type casting problem in selectMovie");
-        }
-
-    }
+    /*
+     * public static void SelectMovie(ArrayList array) { try { ArrayList<Movie>
+     * movieArray = (ArrayList<Movie>) array; int subChoice =
+     * Screen.choice(titles(movieArray)); Movie movie = movieArray.get(subChoice);
+     * movieMenu(movie); } catch (Exception e) { e.printStackTrace();
+     * System.out.println("there is a type casting problem in selectMovie"); }
+     * 
+     * }
+     */
 
     public static void searchMenu() {
 
@@ -121,8 +113,7 @@ public class App implements Serializable {
         if (choice == 1) {
             String keyword = Screen.enter("title of the movie");
             ArrayList<Movie> selectedMovies = database.searchForMovieByTitle(keyword);
-            int subChoice = Screen.choice(titles(selectedMovies));
-            Movie movie = selectedMovies.get(subChoice);
+            Movie movie = (Movie) Screen.chooseListItem(selectedMovies);
             movieMenu(movie);
         } else if (choice == 2) {
             ArrayList<String> subOptions = new ArrayList<String>();
@@ -134,8 +125,8 @@ public class App implements Serializable {
             /********************* I got here ***********************/
 
             if (subChoice == 1) {
-                System.out.println("Enter the production year after which you want to display the movies: ");
-                ArrayList<Movie> selectedMovies = database.searchForMovieByYear(scannerInt(scanner), true);
+                int keyword = Screen.enterInt("the year of production");
+                ArrayList<Movie> selectedMovies = database.searchForMovieByYear(keyword, true);
                 for (int i = 1; i <= selectedMovies.size(); i++) {
                     System.out.println(i + ": " + selectedMovies.get(i - 1).getTitle() + ", "
                             + selectedMovies.get(i - 1).getProductionYear());
