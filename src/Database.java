@@ -23,7 +23,7 @@ public class Database implements Serializable {
 
     public void listMovies() {
         for (int i = 1; i <= movies.size(); i++) {
-            System.out.println(i + ": " + movies.get(i - 1).getTitle());
+            Screen.print(i + ": " + movies.get(i - 1).getTitle());
         }
 
     }

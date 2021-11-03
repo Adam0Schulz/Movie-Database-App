@@ -48,7 +48,7 @@ public class Movie implements Serializable {
 
     public void listCharacters() {
         for (int i = 1; i < characters.size(); i++) {
-            System.out.println(i + ": " + characters.get(i - 1));
+            Screen.print(i + ": " + characters.get(i - 1));
         }
     }
 
@@ -58,7 +58,7 @@ public class Movie implements Serializable {
 
     public void playMovie() {
         for (Character character : characters) {
-            System.out.println(character.getActor() + " - " + character.getRole());
+            Screen.print(character.getActor() + " - " + character.getRole());
         }
 
     }

@@ -33,7 +33,7 @@ public class User implements Serializable {
 
     public void listFavourites() {
         for (int i = 1; i <= favouriteList.size(); i++) {
-            System.out.println(i + ": " + favouriteList.get(i - 1).getTitle());
+            Screen.print(i + ": " + favouriteList.get(i - 1).getTitle());
         }
 
     }
@@ -60,8 +60,8 @@ public class User implements Serializable {
 
     public void listSeenMovies() {
         for (int i = 1; i <= seenMovies.size(); i++) {
-            System.out.println(i + ": " + seenMovies.get(i - 1).getTitle() + " - " + seenMovies.get(i - 1).getDate()
-                    + " - " + seenMovies.get(i - 1).getRating() + "/5 stars");
+            Screen.print(i + ": " + seenMovies.get(i - 1).getTitle() + " - " + seenMovies.get(i - 1).getDate() + " - "
+                    + seenMovies.get(i - 1).getRating() + "/5 stars");
         }
     }
 

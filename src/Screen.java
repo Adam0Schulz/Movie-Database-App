@@ -30,16 +30,20 @@ public class Screen {
 
     // User Input
     public static String enter(String info) {
-        System.out.println("Please enter " + info + ": ");
-        return scanString(scanner);
+        print("Please enter " + info + ": ");
+        return scanStr();
     }
 
     public static int enterInt(String info) {
         return Integer.parseInt(enter(info));
     }
 
+    public static void print(Object value) {
+        System.out.println(value);
+    }
+
     // Handeling the scanner input methods
-    public static String scanString(Scanner scanner) {
+    public static String scanStr() {
         String input = scanner.nextLine();
 
         int intInput = 1;
@@ -48,24 +52,24 @@ public class Screen {
         } catch (Exception e) {
         }
         if (input.equalsIgnoreCase("q")) {
-            System.out.println("Saving...");
+            print("Saving...");
             DatabaseConn.save(database);
             clear();
             System.exit(0);
 
         } else if (intInput == 0) {
-            App.menu(user.isAdmin());
+            App.menu();
         }
 
         return input;
     }
 
-    public static int scanInt(Scanner scanner) {
+    public static int scanInt() {
         String input = scanner.nextLine(); // the reason why I'm using the nextLine() and then parsing it to integer and
                                            // not nextInt() is that nextInt() causes problems with leftover \n (enters)
                                            // and messes up the inputs
         if (input.equalsIgnoreCase("q")) {
-            System.out.println("Saving...");
+            print("Saving...");
             DatabaseConn.save(database);
             clear();
             System.exit(0);
@@ -75,46 +79,46 @@ public class Screen {
         try {
             intInput = Integer.parseInt(input);
         } catch (NumberFormatException e) {
-            System.out.println(new Error("Error: expected input type - int"));
-            App.menu(user.isAdmin());
+            print(new Error("Error: expected input type - int"));
+            App.menu();
         }
         if (intInput == 0) {
-            App.menu(user.isAdmin());
+            App.menu();
         }
 
         return intInput;
-    }
-
-    // Scanner getter
-    public static Scanner getScanner() {
-        return scanner;
     }
 
     // Messages
     // Welcome message
     public static void welcome() {
 
-        System.out.println(welcomeMessage);
-        System.out.println(goBackInfoMessage);
+        print(welcomeMessage);
+        print(goBackInfoMessage);
 
     }
 
     // Not existing account
     public static void noAccount() {
-        System.out.println(noAccountMessage);
+        print(noAccountMessage);
     }
 
     // Choosing one of the following
     public static void listOptions(ArrayList<String> options) {
-        for (int i = 1; i <= options.size(); i++) {
-            System.out.println(i + ": " + options.get(i - 1) + ", ");
+        if (options.size() == 0) {
+            print("0 items found");
+        } else {
+            for (int i = 1; i <= options.size(); i++) {
+                print(i + ": " + options.get(i - 1));
+            }
         }
+
     }
 
     public static int choice(ArrayList<String> options) {
-        System.out.println(chooseSentence);
+        print(chooseSentence);
         listOptions(options);
-        int choice = scanInt(scanner) - 1;
+        int choice = scanInt();
         return choice;
     }
 
@@ -122,17 +126,17 @@ public class Screen {
     public static Object chooseListItem(ArrayList array) {
         if (array.get(0) instanceof Movie) {
             Movie movie;
-            int choice = choice(Movie.titles(array));
+            int choice = choice(Movie.titles(array)) - 1;
             movie = (Movie) array.get(choice);
             return movie;
         } else if (array.get(0) instanceof SeenMovie) {
             SeenMovie movie;
-            int choice = choice(SeenMovie.toString(array));
+            int choice = choice(SeenMovie.toString(array)) - 1;
             movie = (SeenMovie) array.get(choice);
             return movie;
         } else if (array.get(0) instanceof Character) {
             Character character;
-            int choice = choice(Character.toString(array));
+            int choice = choice(Character.toString(array)) - 1;
             character = (Character) array.get(choice);
             return character;
         } else {
@@ -150,6 +154,6 @@ public class Screen {
 
     // Outputting incorrectInput error
     public static void incorrectInput(String input) {
-        System.out.println(new Error("Incorrect " + input + ". Please try again."));
+        print(new Error("Incorrect " + input + ". Please try again."));
     }
 }

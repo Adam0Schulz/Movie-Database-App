@@ -42,9 +42,9 @@ public class DatabaseConn {
         File myObj = new File("database.ser");
         if (myObj.exists() && !myObj.isDirectory()) {
             if (myObj.delete()) {
-                System.out.println("Deleted the file: " + myObj.getName());
+                Screen.print("Deleted the file: " + myObj.getName());
             } else {
-                System.out.println("Failed to delete the file.");
+                Screen.print("Failed to delete the file.");
             }
         }
     }
