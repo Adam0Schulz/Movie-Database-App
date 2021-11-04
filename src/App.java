@@ -88,56 +88,76 @@ public class App implements Serializable {
     }
 
     public static void searchMenu() {
-        Screen.print("hello");
-        /*
-         * ArrayList<String> options = new ArrayList<String>(); options.add("Title");
-         * options.add("Production year"); options.add("Genre"); options.add("Actor");
-         * 
-         * int choice = Screen.choice(options); if (choice == 1) { String keyword =
-         * Screen.enter("title of the movie"); ArrayList<Movie> selectedMovies =
-         * database.searchForMovieByTitle(keyword); Movie movie = (Movie)
-         * Screen.chooseListItem(selectedMovies); movieMenu(movie); } else if (choice ==
-         * 2) { ArrayList<String> subOptions = new ArrayList<String>();
-         * subOptions.add("Search for movies produced after a certain year");
-         * subOptions.add("Seach for movies produced before a certain year");
-         * 
-         * int subChoice = Screen.choice(subOptions);
-         * 
-         * /********************* I got here ***********************
-         * 
-         * if (subChoice == 1) { int keyword =
-         * Screen.enterInt("the year of production"); ArrayList<Movie> selectedMovies =
-         * database.searchForMovieByYear(keyword, true); for (int i = 1; i <=
-         * selectedMovies.size(); i++) { Screen.print(i + ": " + selectedMovies.get(i -
-         * 1).getTitle() + ", " + selectedMovies.get(i - 1).getProductionYear()); }
-         * Movie movie = selectedMovies.get(scannerInt(scanner) - 1); movieMenu(movie);
-         * } else if (subChoice == 2) { System.out.
-         * println("Enter the production year before which you want to display the movies: "
-         * ); ArrayList<Movie> selectedMovies =
-         * database.searchForMovieByYear(scannerInt(scanner), false); for (int i = 1; i
-         * <= selectedMovies.size(); i++) { Screen.print(i + ": " + selectedMovies.get(i
-         * - 1).getTitle() + ", " + selectedMovies.get(i - 1).getProductionYear()); }
-         * Movie movie = selectedMovies.get(scannerInt(scanner) - 1); movieMenu(movie);
-         * } else { Screen.incorrectInput("choice"); searchMenu(); }
-         * 
-         * } else if (choice == 3) {
-         * Screen.print("Please enter movie genre you want to search for: ");
-         * ArrayList<Movie> selectedMovies =
-         * database.searchForMovieByGenre(scannerString(scanner)); for (int i = 1; i <
-         * selectedMovies.size(); i++) { Screen.print( i + ": " + selectedMovies.get(i -
-         * 1).getTitle() + ", " + selectedMovies.get(i - 1).getGenre()); } Movie movie =
-         * selectedMovies.get(scannerInt(scanner) - 1); movieMenu(movie); } else if
-         * (choice == 4) {
-         * Screen.print("Please enter the actor/actress you want to search for: " );
-         * String input = scannerString(scanner); ArrayList<ArrayList<Object>>
-         * selectedMovies = database.searchForMovieByActor(input); Screen.print(input +
-         * " stars in these movies: "); for (int i = 1; i <= selectedMovies.size(); i++)
-         * { Movie singleMovie = (Movie) selectedMovies.get(i - 1).get(0); Character
-         * singleCharacter = (Character) selectedMovies.get(i - 1).get(1);
-         * Screen.print(i + ": " + singleMovie.getTitle() + ", " + singleCharacter); }
-         * Movie movie = (Movie) selectedMovies.get(scannerInt(scanner) - 1).get(0);
-         * movieMenu(movie); } else { Screen.incorrectInput("choice"); searchMenu(); }
-         */
+        // Screen.print("hello");
+
+        ArrayList<String> options = new ArrayList<String>();
+        options.add("Title");
+        options.add("Production year");
+        options.add("Genre");
+        options.add("Actor");
+
+        int choice = Screen.choice(options);
+        if (choice == 1) {
+            String keyword = Screen.enter("title of the movie");
+            ArrayList<Movie> selectedMovies = database.searchForMovieByTitle(keyword);
+            Movie movie = (Movie) Screen.chooseListItem(selectedMovies);
+            movieMenu(movie);
+        } else if (choice == 2) {
+            ArrayList<String> subOptions = new ArrayList<String>();
+            subOptions.add("Search for movies produced after a certain year");
+            subOptions.add("Seach for movies produced before a certain year");
+
+            int subChoice = Screen.choice(subOptions);
+
+            if (subChoice == 1) {
+                int keyword = Screen.enterInt("the year of production");
+                ArrayList<Movie> selectedMovies = database.searchForMovieByYear(keyword, true);
+                for (int i = 1; i <= selectedMovies.size(); i++) {
+                    Screen.print(i + ": " + selectedMovies.get(i - 1).getTitle() + ", "
+                            + selectedMovies.get(i - 1).getProductionYear());
+                }
+                Movie movie = selectedMovies.get(scannerInt(scanner) - 1);
+                movieMenu(movie);
+            } else if (subChoice == 2) {
+                System.out.println("Enter the production year before which you want to display the movies: ");
+                ArrayList<Movie> selectedMovies = database.searchForMovieByYear(scannerInt(scanner), false);
+                for (int i = 1; i <= selectedMovies.size(); i++) {
+                    Screen.print(i + ": " + selectedMovies.get(i - 1).getTitle() + ", "
+                            + selectedMovies.get(i - 1).getProductionYear());
+                }
+                Movie movie = selectedMovies.get(scannerInt(scanner) - 1);
+                movieMenu(movie);
+            } else {
+                Screen.incorrectInput("choice");
+                searchMenu();
+            }
+
+        } else if (choice == 3) {
+            Screen.print("Please enter movie genre you want to search for: ");
+            ArrayList<Movie> selectedMovies = database.searchForMovieByGenre(scannerString(scanner));
+            for (int i = 1; i < selectedMovies.size(); i++) {
+                Screen.print(
+                        i + ": " + selectedMovies.get(i - 1).getTitle() + ", " + selectedMovies.get(i - 1).getGenre());
+            }
+            Movie movie = selectedMovies.get(scannerInt(scanner) - 1);
+            movieMenu(movie);
+        } else if (choice == 4) {
+            Screen.print("Please enter the actor/actress you want to search for: ");
+            String input = scannerString(scanner);
+            ArrayList<ArrayList<Object>> selectedMovies = database.searchForMovieByActor(input);
+            Screen.print(input + " stars in these movies: ");
+            for (int i = 1; i <= selectedMovies.size(); i++) {
+                Movie singleMovie = (Movie) selectedMovies.get(i - 1).get(0);
+                Character singleCharacter = (Character) selectedMovies.get(i - 1).get(1);
+                Screen.print(i + ": " + singleMovie.getTitle() + ", " + singleCharacter);
+            }
+            Movie movie = (Movie) selectedMovies.get(scannerInt(scanner) - 1).get(0);
+            movieMenu(movie);
+        } else {
+            Screen.incorrectInput("choice");
+            searchMenu();
+        }
+
     }
 
     public static void createMovie() {
