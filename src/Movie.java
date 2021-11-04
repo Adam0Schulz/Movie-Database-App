@@ -1,3 +1,4 @@
+
 import java.util.ArrayList;
 import java.io.Serializable;
 
@@ -17,29 +18,33 @@ public class Movie implements Serializable {
         this.characters = characters;
     }
 
-    // Getters and Setters
-    public String getTitle() {
-        return this.title;
-    }
-
+    // Setters and Getters
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public int getProductionYear() {
-        return this.productionYear;
     }
 
     public void setProductionYear(int productionYear) {
         this.productionYear = productionYear;
     }
 
-    public String getGenre() {
-        return this.genre;
-    }
-
     public void setGenre(String genre) {
         this.genre = genre;
+    }
+
+    public void setCharacters(ArrayList<Character> characters) {
+        this.characters = characters;
+    }
+
+    public String getTitle() {
+        return this.title;
+    }
+
+    public int getProductionYear() {
+        return this.productionYear;
+    }
+
+    public String getGenre() {
+        return this.genre;
     }
 
     public ArrayList<Character> getCharacters() {
@@ -50,10 +55,6 @@ public class Movie implements Serializable {
         for (int i = 1; i < characters.size(); i++) {
             Screen.print(i + ": " + characters.get(i - 1));
         }
-    }
-
-    public void setCharacters(ArrayList<Character> characters) {
-        this.characters = characters;
     }
 
     public void playMovie() {
@@ -74,17 +75,18 @@ public class Movie implements Serializable {
 
     }
 
+    // Static method
     public static ArrayList<String> toString(ArrayList<Movie> array, String additAtt, String actor) {
         ArrayList<String> result = new ArrayList<>();
         for (Movie movie : array) {
-            String item = movie.getTitle() + ", ";
+            String item = movie.getTitle();
 
             if (additAtt.equals("year")) {
-                item += ", " + movie.getProductionYear();
+                item = item + ", " + movie.getProductionYear();
             } else if (additAtt.equals("genre")) {
-                item += ", " + movie.getGenre();
+                item = item + ", " + movie.getGenre();
             } else if (additAtt.equals("char")) {
-                item += ", " + movie.searchActor(actor);
+                item = item + ", " + movie.searchActor(actor);
             }
             result.add(item);
         }

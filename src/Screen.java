@@ -2,7 +2,7 @@
 /**
  * Screen
  * 
- * Class to group methods to communicate with the user
+ * Class to group methods which interact with the console
  */
 
 import java.util.Scanner;
@@ -12,8 +12,6 @@ public class Screen {
 
     // Attributes
     private static Scanner scanner = new Scanner(System.in);
-    private static Database database;
-    private static User user;
 
     // Messages
     private static String noAccountMessage = "You have not created an account yet or your login credentials are incorrect";
@@ -26,13 +24,6 @@ public class Screen {
     private static String goBackInfoMessage = "Anytime you feel like you had enough of this awesomeness press Q to awesome save and exit in style\n";
     private static String chooseSentence = "Please choose one of the following options:";
 
-    // Setting the database and user for internal use
-    public static void set(Database database, User user) {
-        Screen.database = database;
-        Screen.user = user;
-
-    }
-
     // User Input
     public static String enter(String info) {
         print("Please enter " + info + ": ");
@@ -43,12 +34,14 @@ public class Screen {
         return Integer.parseInt(enter(info));
     }
 
+    // Basic sout
     public static void print(Object value) {
         System.out.println(value);
     }
 
     // Handeling the scanner input methods
     public static String scanStr() {
+
         String input = scanner.nextLine();
 
         int intInput = 1;
@@ -56,9 +49,11 @@ public class Screen {
             intInput = Integer.parseInt(input);
         } catch (Exception e) {
         }
+
         if (input.equalsIgnoreCase("q")) {
             print("Saving...");
-            DatabaseConn.save(database);
+            DatabaseConn.save(App.getDatabase());
+            pause();
             clear();
             System.exit(0);
 
@@ -70,12 +65,16 @@ public class Screen {
     }
 
     public static int scanInt() {
-        String input = scanner.nextLine(); // the reason why I'm using the nextLine() and then parsing it to integer and
-                                           // not nextInt() is that nextInt() causes problems with leftover \n (enters)
-                                           // and messes up the inputs
+        /*
+         * The reason why I'm using the nextLine() and then parsing it to integer and
+         * not nextInt() is that nextInt() causes problems with leftover \n (enters)
+         */
+        String input = scanner.nextLine();
+
         if (input.equalsIgnoreCase("q")) {
             print("Saving...");
-            DatabaseConn.save(database);
+            DatabaseConn.save(App.getDatabase());
+            pause();
             clear();
             System.exit(0);
 
@@ -94,24 +93,22 @@ public class Screen {
         return intInput;
     }
 
-    // Messages
-    // Welcome message
     public static void welcome() {
-
+        clear();
         print(welcomeMessage);
         print(goBackInfoMessage);
 
     }
 
-    // Not existing account
+    // Display not existing account message
     public static void noAccount() {
         print(noAccountMessage);
     }
 
-    // Choosing one of the following
+    // Displays options
     public static void listOptions(ArrayList<String> options) {
         if (options.size() == 0) {
-            print("0 items found");
+            print("\nThis list is empty\n");
         } else {
             for (int i = 1; i <= options.size(); i++) {
                 print(i + ": " + options.get(i - 1));
@@ -120,6 +117,7 @@ public class Screen {
 
     }
 
+    // Displays options and returns the choice int
     public static int choice(ArrayList<String> options) {
         print(chooseSentence);
         listOptions(options);
@@ -127,44 +125,84 @@ public class Screen {
         return choice;
     }
 
-    // this seem to be a useful function but I'm not sure about its placement
+    // Displays options, selects the choice from the options and returns it
     public static Object chooseListItem(ArrayList array, String search) {
+
         String[] searchArr = search.split(" - ", 2);
-        if (array.get(0) instanceof Movie) {
+        Object object;
+
+        try {
+            object = array.get(0);
+        } catch (IndexOutOfBoundsException e) {
+            print("\nThis list is empty\n");
+            pause();
+            return null;
+        }
+
+        if (object instanceof Movie && !(object instanceof SeenMovie) && !(searchArr[0].equals("char"))) {
+
             Movie movie;
             int choice = choice(Movie.toString(array, "", "")) - 1;
             movie = (Movie) array.get(choice);
             return movie;
-        } else if (array.get(0) instanceof Movie && searchArr[0].equals("char")) {
+
+        } else if (object instanceof Movie && searchArr[0].equals("char")) {
+
             Movie movie;
             int choice = choice(Movie.toString(array, searchArr[0], searchArr[1])) - 1;
             movie = (SeenMovie) array.get(choice);
             return movie;
-        } else if (array.get(0) instanceof SeenMovie) {
+
+        } else if (object instanceof SeenMovie) {
+
             SeenMovie movie;
             int choice = choice(SeenMovie.toString(array)) - 1;
             movie = (SeenMovie) array.get(choice);
             return movie;
-        } else if (array.get(0) instanceof Character) {
+
+        } else if (object instanceof Character) {
+
             Character character;
             int choice = choice(Character.toString(array)) - 1;
             character = (Character) array.get(choice);
             return character;
+
         } else {
             return null;
         }
     }
 
-    // Clearing the console - taken from the internet
-    public static void clear() {
-
-        System.out.print("\033[H\033[2J");
-        System.out.flush();
-
+    // Pauses the application for 0.8 seconds
+    public static void pause() {
+        try {
+            Thread.sleep(800);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    // Outputting incorrectInput error
+    // Clears the console
+    public static void clear() {
+        print("\033[H\033[2J");
+        System.out.flush();
+    }
+
+    // Displays incorrectInput error
     public static void incorrectInput(String input) {
         print(new Error("Incorrect " + input + ". Please try again."));
     }
+
+    public static ArrayList<Character> characterInsertion(String input, ArrayList<Character> characters) {
+        if (input.equals("done")) {
+            return characters;
+        } else {
+            String[] attributes = input.split(" as ", 2);
+            Character character = new Character(attributes[1], attributes[0]);
+            characters.add(character);
+
+            characterInsertion(Screen.scanStr(), characters);
+        }
+        return characters;
+    }
+
 }

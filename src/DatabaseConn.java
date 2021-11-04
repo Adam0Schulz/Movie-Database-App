@@ -1,3 +1,4 @@
+
 import java.io.*;
 import java.util.ArrayList;
 
@@ -50,7 +51,7 @@ public class DatabaseConn {
     }
 
     public static void initialCreation() {
-        // Creating a database object
+        // Creates a database object
         Database database = new Database();
 
         // Manual addition of the initial movies
@@ -127,7 +128,7 @@ public class DatabaseConn {
         characters.add(new Character("Fashion Designer", "Pat Mahoney"));
         database.addMovie(new Movie("Awesome Lotus", 1983, "action comedy", characters));
 
-        // Create the admin and add him/her to the database
+        // Creates the admin and add him/her to the database
         User admin = new User("admin", "Admin123");
         admin.makeAdmin();
         database.addUser(admin);

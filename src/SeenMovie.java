@@ -1,3 +1,4 @@
+
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -8,9 +9,9 @@ public class SeenMovie extends Movie {
     private int rating;
 
     // Constructor
-    public SeenMovie(String title, int productionYear, String description, ArrayList<Character> characters, Date date,
+    public SeenMovie(String title, int productionYear, String genre, ArrayList<Character> characters, Date date,
             int rating) {
-        super(title, productionYear, description, characters);
+        super(title, productionYear, genre, characters);
         this.date = date;
         this.rating = rating;
     }
@@ -28,6 +29,7 @@ public class SeenMovie extends Movie {
         this.rating = rating;
     }
 
+    // Static method
     public static ArrayList<String> toString(ArrayList<SeenMovie> array) {
         ArrayList<String> seenMoviesArray = new ArrayList<String>();
         for (SeenMovie seenMovie : array) {

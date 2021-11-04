@@ -1,31 +1,25 @@
+
 import java.util.ArrayList;
 import java.io.Serializable;
 
 public class Database implements Serializable {
+
+    // Attributes / database content
     private ArrayList<User> users = new ArrayList<User>();
     private ArrayList<Movie> movies = new ArrayList<Movie>();
 
+    // Constructor
+    public Database() {
+    }
+
+    // Methods
+    // Getters
     public ArrayList<User> getUsers() {
         return users;
     }
 
-    public void addUser(User user) {
-        users.add(user);
-    }
-
-    public void removeUser(User user) {
-        users.remove(user);
-    }
-
     public ArrayList<Movie> getMovies() {
         return movies;
-    }
-
-    public void listMovies() {
-        for (int i = 1; i <= movies.size(); i++) {
-            Screen.print(i + ": " + movies.get(i - 1).getTitle());
-        }
-
     }
 
     public ArrayList<String> getMovieTitles() {
@@ -36,12 +30,22 @@ public class Database implements Serializable {
         return titles;
     }
 
-    public Movie selectMovie(int index) {
-        return movies.get(index);
+    // Additions
+    public void addUser(User user) {
+        users.add(user);
     }
 
     public void addMovie(Movie movie) {
         movies.add(movie);
+    }
+
+    public void removeUser(User user) {
+        users.remove(user);
+    }
+
+    // not using this but we should
+    public Movie selectMovie(int index) {
+        return movies.get(index);
     }
 
     public void removeMovie(Movie movie) {
@@ -109,9 +113,30 @@ public class Database implements Serializable {
         return array;
     }
 
-    @Override
-    public String toString() {
-        return "{" + " users='" + getUsers() + "'" + ", movies='" + getMovies() + "'" + "}";
+    public User registration(String username) {
+        String password = Screen.enter("your password");
+        this.addUser(new User(username, password));
+        return this.searchForUser(username);
+    }
+
+    public void createMovie() {
+
+        String title = Screen.enter("the new title");
+
+        int year = Screen.enterInt("the new production year");
+
+        String genre = Screen.enter("genre/genres separated by a space");
+
+        ArrayList<Character> characters = new ArrayList<Character>();
+        Screen.print(
+                "Please enter characters one by one in this format (actor as role) and when you're done enter done: ");
+        characters = Screen.characterInsertion(Screen.scanStr(), characters);
+
+        Movie movie = new Movie(title, year, genre, characters);
+        this.addMovie(movie);
+
+        Screen.print("Movie has been added to the database");
+        Screen.pause();
     }
 
 }

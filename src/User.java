@@ -1,24 +1,30 @@
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.io.Serializable;
 
 public class User implements Serializable {
+
+    // Attributes
     private String username;
     private String password;
     private ArrayList<Movie> favouriteList = new ArrayList<Movie>();
     private ArrayList<SeenMovie> seenMovies = new ArrayList<SeenMovie>();
     private boolean admin;
 
+    // Constructor
     public User(String username, String password) {
         this.username = username;
         this.password = password;
         this.admin = false;
     }
 
+    // This method is only executed once
     public void makeAdmin() {
         this.admin = true;
     }
 
+    // Getters and setters
     public String getUsername() {
         return this.username;
     }
@@ -29,13 +35,6 @@ public class User implements Serializable {
 
     public ArrayList<Movie> getFavouriteList() {
         return this.favouriteList;
-    }
-
-    public void listFavourites() {
-        for (int i = 1; i <= favouriteList.size(); i++) {
-            Screen.print(i + ": " + favouriteList.get(i - 1).getTitle());
-        }
-
     }
 
     public ArrayList<String> getFavouriteListTitles() {
@@ -58,16 +57,11 @@ public class User implements Serializable {
         return this.seenMovies;
     }
 
-    public void listSeenMovies() {
-        for (int i = 1; i <= seenMovies.size(); i++) {
-            Screen.print(i + ": " + seenMovies.get(i - 1).getTitle() + " - " + seenMovies.get(i - 1).getDate() + " - "
-                    + seenMovies.get(i - 1).getRating() + "/5 stars");
-        }
-    }
-
     public void addSeenMovie(Movie movie, int rating) {
-        this.seenMovies.add(new SeenMovie(movie.getTitle(), movie.getProductionYear(), movie.getGenre(),
-                movie.getCharacters(), new Date(), rating));
+        SeenMovie seen = new SeenMovie(movie.getTitle(), movie.getProductionYear(), movie.getGenre(),
+                movie.getCharacters(), new Date(), rating);
+
+        this.seenMovies.add(seen);
 
     }
 
