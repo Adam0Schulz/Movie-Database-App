@@ -98,15 +98,13 @@ public class Database implements Serializable {
 
     public ArrayList<ArrayList<Object>> searchForMovieByActor(String actor) {
         ArrayList<ArrayList<Object>> array = new ArrayList<ArrayList<Object>>();
+
         for (Movie movie : movies) {
-            for (Character character : movie.getCharacters()) {
-                if (character.getActor().toLowerCase().contains(actor.toLowerCase())) {
-                    ArrayList<Object> subArray = new ArrayList<Object>();
-                    subArray.add(movie);
-                    subArray.add(character);
-                    array.add(subArray);
-                }
-            }
+            ArrayList<Object> subArray = new ArrayList<Object>();
+            Object character = (Object) movie.searchActor(actor);
+            subArray.add(movie);
+            subArray.add(character);
+            array.add(subArray);
         }
         return array;
     }
