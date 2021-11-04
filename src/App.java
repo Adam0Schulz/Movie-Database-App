@@ -1,6 +1,5 @@
 
 import java.util.ArrayList;
-import java.util.Scanner;
 import java.io.*;
 
 public class App implements Serializable {
@@ -17,10 +16,10 @@ public class App implements Serializable {
 
     public static void start() {
         Screen.welcome();
-        login();
+        loginMenu();
     }
 
-    public static void login() {
+    public static void loginMenu() {
 
         String username = Screen.enter("your username");
         currentUser = database.searchForUser(username);
@@ -28,14 +27,14 @@ public class App implements Serializable {
         if (currentUser == null) {
             Screen.noAccount();
             registration(username);
-            menu();
+            mainMenu();
         } else {
             String password = Screen.enter("your password");
             if (currentUser.passwordValidation(password)) {
-                menu();
+                mainMenu();
             } else {
                 Screen.incorrectInput("password");
-                login();
+                loginMenu();
             }
 
         }
@@ -48,7 +47,7 @@ public class App implements Serializable {
         currentUser = database.searchForUser(username);
     }
 
-    public static void menu() {
+    public static void mainMenu() {
 
         ArrayList<String> options = new ArrayList<String>();
         options.add("List all the movies");
@@ -62,7 +61,7 @@ public class App implements Serializable {
 
         if (choice == 1) {
 
-            Movie movie = (Movie) Screen.chooseListItem(database.getMovies());
+            Movie movie = (Movie) Screen.chooseListItem(database.getMovies(), "");
             movieMenu(movie);
 
         } else if (choice == 2) {
@@ -71,24 +70,24 @@ public class App implements Serializable {
 
         } else if (choice == 3) {
 
-            Movie movie = (Movie) Screen.chooseListItem(currentUser.getFavouriteList());
+            Movie movie = (Movie) Screen.chooseListItem(currentUser.getFavouriteList(), "");
             movieMenu(movie);
 
         } else if (choice == 4 && currentUser.isAdmin()) {
 
-            Movie movie = (Movie) Screen.chooseListItem(currentUser.getSeenMovies());
+            Movie movie = (Movie) Screen.chooseListItem(currentUser.getSeenMovies(), "");
             movieMenu(movie);
 
         } else {
 
             Screen.incorrectInput("choice");
-            menu();
+            mainMenu();
 
         }
     }
 
     public static void searchMenu() {
-        // Screen.print("hello");
+        Movie movie = null;
 
         ArrayList<String> options = new ArrayList<String>();
         options.add("Title");
@@ -100,59 +99,39 @@ public class App implements Serializable {
         if (choice == 1) {
             String keyword = Screen.enter("title of the movie");
             ArrayList<Movie> selectedMovies = database.searchForMovieByTitle(keyword);
-            Movie movie = (Movie) Screen.chooseListItem(selectedMovies);
-            movieMenu(movie);
+            movie = (Movie) Screen.chooseListItem(selectedMovies, "");
         } else if (choice == 2) {
             ArrayList<String> subOptions = new ArrayList<String>();
             subOptions.add("Search for movies produced after a certain year");
             subOptions.add("Seach for movies produced before a certain year");
 
             int subChoice = Screen.choice(subOptions);
-
+            int keyword = Screen.enterInt("the year of production");
+            ArrayList<Movie> selectedMovies;
             if (subChoice == 1) {
-                int keyword = Screen.enterInt("the year of production");
-                ArrayList<Movie> selectedMovies = database.searchForMovieByYear(keyword, true);
-                Screen.chooseListItem(selectedMovies);
-                movieMenu(movie);
+                selectedMovies = database.searchForMovieByYear(keyword, true);
+                movie = (Movie) Screen.chooseListItem(selectedMovies, "year - " + keyword);
             } else if (subChoice == 2) {
-                System.out.println("Enter the production year before which you want to display the movies: ");
-                ArrayList<Movie> selectedMovies = database.searchForMovieByYear(scannerInt(scanner), false);
-                for (int i = 1; i <= selectedMovies.size(); i++) {
-                    Screen.print(i + ": " + selectedMovies.get(i - 1).getTitle() + ", "
-                            + selectedMovies.get(i - 1).getProductionYear());
-                }
-                Movie movie = selectedMovies.get(scannerInt(scanner) - 1);
-                movieMenu(movie);
+                selectedMovies = database.searchForMovieByYear(keyword, false);
+                movie = (Movie) Screen.chooseListItem(selectedMovies, "year - " + keyword);
             } else {
                 Screen.incorrectInput("choice");
                 searchMenu();
             }
 
         } else if (choice == 3) {
-            Screen.print("Please enter movie genre you want to search for: ");
-            ArrayList<Movie> selectedMovies = database.searchForMovieByGenre(scannerString(scanner));
-            for (int i = 1; i < selectedMovies.size(); i++) {
-                Screen.print(
-                        i + ": " + selectedMovies.get(i - 1).getTitle() + ", " + selectedMovies.get(i - 1).getGenre());
-            }
-            Movie movie = selectedMovies.get(scannerInt(scanner) - 1);
-            movieMenu(movie);
+            String keyword = Screen.enter("the movie genre");
+            ArrayList<Movie> selectedMovies = database.searchForMovieByGenre(keyword);
+            movie = (Movie) Screen.chooseListItem(selectedMovies, "genre - " + keyword);
         } else if (choice == 4) {
-            Screen.print("Please enter the actor/actress you want to search for: ");
-            String input = scannerString(scanner);
-            ArrayList<ArrayList<Object>> selectedMovies = database.searchForMovieByActor(input);
-            Screen.print(input + " stars in these movies: ");
-            for (int i = 1; i <= selectedMovies.size(); i++) {
-                Movie singleMovie = (Movie) selectedMovies.get(i - 1).get(0);
-                Character singleCharacter = (Character) selectedMovies.get(i - 1).get(1);
-                Screen.print(i + ": " + singleMovie.getTitle() + ", " + singleCharacter);
-            }
-            Movie movie = (Movie) selectedMovies.get(scannerInt(scanner) - 1).get(0);
-            movieMenu(movie);
+            String keyword = Screen.enter("the actor/actress");
+            ArrayList<ArrayList<Object>> selectedMovies = database.searchForMovieByActor(keyword);
+            movie = (Movie) Screen.chooseListItem(selectedMovies, "actor - " + keyword);
         } else {
             Screen.incorrectInput("choice");
             searchMenu();
         }
+        movieMenu(movie);
 
     }
 
@@ -168,7 +147,7 @@ public class App implements Serializable {
         Movie movie = new Movie(title, year, genre, characters);
         database.addMovie(movie);
         Screen.print("Movie has been added to the database");
-        menu();
+        mainMenu();
     }
 
     public static ArrayList<Character> characterInsertion(String input, ArrayList<Character> characters) {
@@ -208,16 +187,16 @@ public class App implements Serializable {
             movie.playMovie();
             int rating = Screen.enterInt("rating from 1 to 5");
             currentUser.addSeenMovie(movie, rating);
-            menu();
+            mainMenu();
         } else if (choice == 2 && favourite) {
             currentUser.removeFavouriteList(movie);
-            menu();
+            mainMenu();
         } else if (choice == 2 && !favourite) {
             currentUser.addToFavouriteList(movie);
-            menu();
+            mainMenu();
         } else if (choice == 3 && currentUser.isAdmin()) {
             updateMovie(movie);
-            menu();
+            mainMenu();
         } else if (choice == 4 && currentUser.isAdmin()) {
             database.removeMovie(movie);
         } else {

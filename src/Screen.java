@@ -17,7 +17,12 @@ public class Screen {
 
     // Messages
     private static String noAccountMessage = "You have not created an account yet or your login credentials are incorrect";
-    private static String welcomeMessage = "\nWelcome to AWESOMEFLIX\nEnjoy yourself on your journey through this awesomeness!!!\n";
+    private static String welcomeMessage = "     ___   ____    __    ____  _______      _______.  ______   .___  ___.  _______  _______  __       __  ___   ___ \n"
+            + "    /   \\  \\   \\  /  \\  /   / |   ____|    /       | /  __  \\  |   \\/   | |   ____||   ____||  |     |  | \\  \\ /  / \n"
+            + "   /  ^  \\  \\   \\/    \\/   /  |  |__      |   (----`|  |  |  | |  \\  /  | |  |__   |  |__   |  |     |  |  \\  V  /  \n"
+            + "  /  /_\\  \\  \\            /   |   __|      \\   \\    |  |  |  | |  |\\/|  | |   __|  |   __|  |  |     |  |   >   <   \n"
+            + " /  _____  \\  \\    /\\    /    |  |____ .----)   |   |  `--'  | |  |  |  | |  |____ |  |     |  `----.|  |  /  .  \\  \n"
+            + "/__/     \\__\\  \\__/  \\__/     |_______||_______/     \\______/  |__|  |__| |_______||__|     |_______||__| /__/ \\__\\ ";
     private static String goBackInfoMessage = "Anytime you feel like you had enough of this awesomeness press Q to awesome save and exit in style\n";
     private static String chooseSentence = "Please choose one of the following options:";
 
@@ -58,7 +63,7 @@ public class Screen {
             System.exit(0);
 
         } else if (intInput == 0) {
-            App.menu();
+            App.mainMenu();
         }
 
         return input;
@@ -80,10 +85,10 @@ public class Screen {
             intInput = Integer.parseInt(input);
         } catch (NumberFormatException e) {
             print(new Error("Error: expected input type - int"));
-            App.menu();
+            App.mainMenu();
         }
         if (intInput == 0) {
-            App.menu();
+            App.mainMenu();
         }
 
         return intInput;
@@ -123,11 +128,17 @@ public class Screen {
     }
 
     // this seem to be a useful function but I'm not sure about its placement
-    public static Object chooseListItem(ArrayList array) {
+    public static Object chooseListItem(ArrayList array, String search) {
+        String[] searchArr = search.split(" - ", 2);
         if (array.get(0) instanceof Movie) {
             Movie movie;
-            int choice = choice(Movie.titles(array)) - 1;
+            int choice = choice(Movie.toString(array, "", "")) - 1;
             movie = (Movie) array.get(choice);
+            return movie;
+        } else if (array.get(0) instanceof Movie && searchArr[0].equals("char")) {
+            Movie movie;
+            int choice = choice(Movie.toString(array, searchArr[0], searchArr[1])) - 1;
+            movie = (SeenMovie) array.get(choice);
             return movie;
         } else if (array.get(0) instanceof SeenMovie) {
             SeenMovie movie;
@@ -139,8 +150,6 @@ public class Screen {
             int choice = choice(Character.toString(array)) - 1;
             character = (Character) array.get(choice);
             return character;
-        } else if (array.get(0) instanceof ) {
-
         } else {
             return null;
         }

@@ -74,7 +74,7 @@ public class Movie implements Serializable {
 
     }
 
-    public static ArrayList<String> toString(ArrayList<Movie> array, String additAtt) {
+    public static ArrayList<String> toString(ArrayList<Movie> array, String additAtt, String actor) {
         ArrayList<String> result = new ArrayList<>();
         for (Movie movie : array) {
             String item = movie.getTitle() + ", ";
@@ -84,28 +84,12 @@ public class Movie implements Serializable {
             } else if (additAtt.equals("genre")) {
                 item += ", " + movie.getGenre();
             } else if (additAtt.equals("char")) {
-                item += ", " + movie.searchActor();
+                item += ", " + movie.searchActor(actor);
             }
             result.add(item);
         }
         return result;
 
-    }
-
-    public static ArrayList<String> titlesYears(ArrayList<Movie> array) {
-        ArrayList<String> result = new ArrayList<>();
-        for (Movie movie : array) {
-            result.add(movie.getTitle() + ", " + movie.getProductionYear());
-        }
-        return result;
-    }
-
-    public static ArrayList<String> titlesGenres(ArrayList<Movie> array) {
-        ArrayList<String> result = new ArrayList<>();
-        for (Movie movie : array) {
-            result.add(movie.getTitle() + ", " + movie.getGenre());
-        }
-        return result;
     }
 
 }
