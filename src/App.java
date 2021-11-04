@@ -157,7 +157,7 @@ public class App implements Serializable {
 
             String keyword = Screen.enter("the actor/actress");
             ArrayList<ArrayList<Object>> selectedMovies = database.searchForMovieByActor(keyword);
-            movie = (Movie) Screen.chooseListItem(selectedMovies, "actor - " + keyword);
+            movie = (Movie) Screen.chooseListItem(selectedMovies, "char - " + keyword);
 
         } else {
             Screen.incorrectInput("choice");

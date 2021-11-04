@@ -139,18 +139,32 @@ public class Screen {
             return null;
         }
 
-        if (object instanceof Movie && !(object instanceof SeenMovie) && !(searchArr[0].equals("char"))) {
+        if (object instanceof Movie && !(object instanceof SeenMovie) && search == "") {
 
             Movie movie;
-            int choice = choice(Movie.toString(array, "", "")) - 1;
+            int choice = choice(Movie.toString(array, "")) - 1;
             movie = (Movie) array.get(choice);
             return movie;
 
         } else if (object instanceof Movie && searchArr[0].equals("char")) {
 
             Movie movie;
-            int choice = choice(Movie.toString(array, searchArr[0], searchArr[1])) - 1;
-            movie = (SeenMovie) array.get(choice);
+            int choice = choice(Movie.toString(array, search)) - 1;
+            movie = (Movie) array.get(choice);
+            return movie;
+
+        } else if (object instanceof Movie && searchArr[0].equals("year")) {
+
+            Movie movie;
+            int choice = choice(Movie.toString(array, search)) - 1;
+            movie = (Movie) array.get(choice);
+            return movie;
+
+        } else if (object instanceof Movie && searchArr[0].equals("genre")) {
+
+            Movie movie;
+            int choice = choice(Movie.toString(array, search)) - 1;
+            movie = (Movie) array.get(choice);
             return movie;
 
         } else if (object instanceof SeenMovie) {
@@ -183,8 +197,10 @@ public class Screen {
 
     // Clears the console
     public static void clear() {
+
         print("\033[H\033[2J");
         System.out.flush();
+
     }
 
     // Displays incorrectInput error
