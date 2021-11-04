@@ -112,6 +112,7 @@ public class App implements Serializable {
             if (subChoice == 1) {
                 int keyword = Screen.enterInt("the year of production");
                 ArrayList<Movie> selectedMovies = database.searchForMovieByYear(keyword, true);
+                // ArrayList<String> results = ;
                 for (int i = 1; i <= selectedMovies.size(); i++) {
                     Screen.print(i + ": " + selectedMovies.get(i - 1).getTitle() + ", "
                             + selectedMovies.get(i - 1).getProductionYear());
