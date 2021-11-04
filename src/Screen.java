@@ -139,6 +139,8 @@ public class Screen {
             int choice = choice(Character.toString(array)) - 1;
             character = (Character) array.get(choice);
             return character;
+        } else if (array.get(0) instanceof ) {
+
         } else {
             return null;
         }
