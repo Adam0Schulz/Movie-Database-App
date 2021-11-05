@@ -198,10 +198,8 @@ public class Screen {
     // Clears the console
     public static void clear() {
 
-        /*
-         * print("\033[H\033[2J"); System.out.flush();
-         */
-        print("clearing the console");
+        print("\033[H\033[2J");
+        System.out.flush();
 
     }
 
