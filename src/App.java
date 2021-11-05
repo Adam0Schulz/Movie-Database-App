@@ -1,348 +1,291 @@
 import java.util.ArrayList;
-import java.util.Scanner;
 import java.io.*;
 
 public class App implements Serializable {
 
-    static Database database = DatabaseConn.load("database.ser");
-    static String chooseSentence = "Please choose one of the following options:";
-    static User currentUser;
-    static Scanner scanner = new Scanner(System.in); // opening the scanner but not closing it (intentionally) because
-                                                     // it causes problems when there are multiple uses of a scanner
+    private static Database database = DatabaseConn.load("database.ser");
+    private static User currentUser;
+
+    public static Database getDatabase() {
+        return database;
+    }
 
     public static void main(String[] args) throws Exception {
 
-        // System.out.println(database.getMovies().get(0).getTitle());
-        // System.out.println(database.getUsers().get(1).getUsername());
         start();
 
     }
 
     public static void start() {
-        System.out.println(
-                "\nWelcome to our awesome movie database thingy app. Enjoy yourself on your journey through this awesomeness!!!");
-        System.out.println(
-                "Anytime you feel like you had enough of this awesomeness press Q to awesome save and exit in style\n");
-        login();
+        Screen.welcome();
+        loginMenu();
     }
 
-    public static void login() {
-        System.out.println("Please enter your username: ");
-        String username = scannerString(scanner);
+    public static void loginMenu() {
+
+        String username = Screen.enter("your username / create your username");
         currentUser = database.searchForUser(username);
+
         if (currentUser == null) {
-            System.out
-                    .println("Your have not created an account yet. In order to create an account create a password.");
-            String password = scannerString(scanner);
-            database.addUser(new User(username, password));
-            currentUser = database.searchForUser(username);
-            menu(currentUser.isAdmin());
+            Screen.noAccount();
+
+            currentUser = database.registration(username);
+
         } else {
-            System.out.println("Please enter your password: ");
-            String password = scannerString(scanner);
-            if (currentUser.passwordValidation(password)) {
-                menu(currentUser.isAdmin());
-            } else {
-                incorrectInput("password");
-                login();
+            String password = Screen.enter("your password");
+            boolean passwordValid = currentUser.passwordValidation(password);
+
+            if (!passwordValid) {
+                Screen.incorrectInput("password");
+                loginMenu();
             }
 
         }
-
+        mainMenu();
     }
 
-    public static void menu(boolean admin) {
-        String extension = "";
-        if (admin) {
-            extension = ", (5) create a movie";
+    public static void mainMenu() {
+        Screen.welcome();
+
+        // Creates options for menu
+        ArrayList<String> options = new ArrayList<String>();
+        options.add("List all the movies");
+        options.add("Search for a movie");
+        options.add("List all of your favourite movies");
+        options.add("See your history");
+        if (currentUser.isAdmin()) {
+            options.add("Create a movie");
         }
-        System.out.println(chooseSentence
-                + "(1) list all the movies, (2) search for a movie, (3) list all of your favourite movies, (4) see your history"
-                + extension);
-        int choice = scannerInt(scanner);
+        // Displays options and stores the choice input
+        int choice = Screen.choice(options);
+
+        // Creates movie object to pass to movieMenu
+        Movie movie = null;
+
         if (choice == 1) {
-            System.out.println("If you want to select the movie enter the corresponding number: ");
-            database.listMovies();
-            Movie movie = database.selectMovie(scannerInt(scanner) - 1);
-            movieMenu(movie);
+
+            ArrayList<Movie> selectionList = database.getMovies();
+            movie = (Movie) Screen.chooseListItem(selectionList, "");
+
         } else if (choice == 2) {
+
             searchMenu();
+
         } else if (choice == 3) {
-            System.out.println(
-                    "This is your favourite list. You can enter the corresponding number to select the movie: ");
-            currentUser.listFavourites();
-            Movie selectedMovie = currentUser.getFavouriteList().get(scannerInt(scanner) - 1);
-            movieMenu(selectedMovie);
+
+            ArrayList<Movie> selectionList = currentUser.getFavouriteList();
+            movie = (Movie) Screen.chooseListItem(selectionList, "");
 
         } else if (choice == 4) {
-            System.out.println("If you want to select the movie enter the corresponding number: ");
-            currentUser.listSeenMovies();
-            Movie movie = currentUser.getSeenMovies().get(scannerInt(scanner) - 1);
-            movieMenu(movie);
+
+            ArrayList<SeenMovie> selectionList = currentUser.getSeenMovies();
+            movie = (Movie) Screen.chooseListItem(selectionList, "");
+
+        } else if (choice == 5 && currentUser.isAdmin()) {
+
+            database.createMovie();
+            mainMenu();
+
         } else {
 
-            if (currentUser.isAdmin()) {
-                if (choice == 5) {
-                    createMovie();
-                    menu(currentUser.isAdmin());
-                } else {
-                    incorrectInput("choice");
-                    menu(currentUser.isAdmin());
-                }
-            } else {
-                incorrectInput("choice");
-                menu(currentUser.isAdmin());
-            }
+            Screen.incorrectInput("choice");
+            mainMenu();
 
         }
-        // print out the prompt to choose between list movies, search for a movie and
-        // list your favourite list, and calls according methods.
+        movieMenu(movie);
     }
 
     public static void searchMenu() {
-        System.out.println("Select a search criteria\n1: Title\n2: Production year\n3: Genre\n4: Actor");
-        int choice = scannerInt(scanner);
-        if (choice == 1) {
-            System.out.println("Please enter title of the movie you want to search for: ");
-            ArrayList<Movie> selectedMovies = database.searchForMovieByTitle(scannerString(scanner));
-            for (int i = 1; i <= selectedMovies.size(); i++) {
-                System.out.println(i + ": " + selectedMovies.get(i - 1).getTitle());
+        Screen.welcome();
 
-            }
-            Movie movie = selectedMovies.get(scannerInt(scanner) - 1);
-            movieMenu(movie);
+        // Creates options for attributes to search for
+        ArrayList<String> options = new ArrayList<String>();
+        options.add("Title");
+        options.add("Production year");
+        options.add("Genre");
+        options.add("Actor");
+
+        // Displays options and stores the choice input
+        int choice = Screen.choice(options);
+
+        // Creates movie object to pass to movie menu
+        Movie movie = null;
+
+        if (choice == 1) {
+
+            String keyword = Screen.enter("title of the movie");
+            ArrayList<Movie> selectedMovies = database.searchForMovieByTitle(keyword);
+            movie = (Movie) Screen.chooseListItem(selectedMovies, "");
+
         } else if (choice == 2) {
-            System.out.println(
-                    "Select one of the following: (1) search for movies produced after a certain year, (2) search for movies produced before a certain year");
-            int input = scannerInt(scanner);
-            if (input == 1) {
-                System.out.println("Enter the production year after which you want to display the movies: ");
-                ArrayList<Movie> selectedMovies = database.searchForMovieByYear(scannerInt(scanner), true);
-                for (int i = 1; i <= selectedMovies.size(); i++) {
-                    System.out.println(i + ": " + selectedMovies.get(i - 1).getTitle() + ", "
-                            + selectedMovies.get(i - 1).getProductionYear());
-                }
-                Movie movie = selectedMovies.get(scannerInt(scanner) - 1);
-                movieMenu(movie);
-            } else if (input == 2) {
-                System.out.println("Enter the production year before which you want to display the movies: ");
-                ArrayList<Movie> selectedMovies = database.searchForMovieByYear(scannerInt(scanner), false);
-                for (int i = 1; i <= selectedMovies.size(); i++) {
-                    System.out.println(i + ": " + selectedMovies.get(i - 1).getTitle() + ", "
-                            + selectedMovies.get(i - 1).getProductionYear());
-                }
-                Movie movie = selectedMovies.get(scannerInt(scanner) - 1);
-                movieMenu(movie);
+
+            // Creates options for time period related to the year
+            ArrayList<String> subOptions = new ArrayList<String>();
+            subOptions.add("Search for movies produced after a certain year");
+            subOptions.add("Seach for movies produced before a certain year");
+
+            // Displays options and stores the choice input
+            int subChoice = Screen.choice(subOptions);
+
+            int keyword = Screen.enterInt("the year of production");
+
+            ArrayList<Movie> selectedMovies;
+
+            if (subChoice == 1) {
+
+                selectedMovies = database.searchForMovieByYear(keyword, true);
+                movie = (Movie) Screen.chooseListItem(selectedMovies, "year - " + keyword);
+
+            } else if (subChoice == 2) {
+
+                selectedMovies = database.searchForMovieByYear(keyword, false);
+                movie = (Movie) Screen.chooseListItem(selectedMovies, "year - " + keyword);
+
             } else {
-                incorrectInput("choice");
+                Screen.incorrectInput("choice");
                 searchMenu();
             }
 
         } else if (choice == 3) {
-            System.out.println("Please enter movie genre you want to search for: ");
-            ArrayList<Movie> selectedMovies = database.searchForMovieByGenre(scannerString(scanner));
-            for (int i = 1; i < selectedMovies.size(); i++) {
-                System.out.println(
-                        i + ": " + selectedMovies.get(i - 1).getTitle() + ", " + selectedMovies.get(i - 1).getGenre());
-            }
-            Movie movie = selectedMovies.get(scannerInt(scanner) - 1);
-            movieMenu(movie);
+
+            String keyword = Screen.enter("the movie genre");
+            ArrayList<Movie> selectedMovies = database.searchForMovieByGenre(keyword);
+            movie = (Movie) Screen.chooseListItem(selectedMovies, "genre - " + keyword);
+
         } else if (choice == 4) {
-            System.out.println("Please enter the actor/actress you want to search for: ");
-            String input = scannerString(scanner);
-            ArrayList<ArrayList<Object>> selectedMovies = database.searchForMovieByActor(input);
-            System.out.println(input + " stars in these movies: ");
-            for (int i = 1; i <= selectedMovies.size(); i++) {
-                Movie singleMovie = (Movie) selectedMovies.get(i - 1).get(0);
-                Character singleCharacter = (Character) selectedMovies.get(i - 1).get(1);
-                System.out.println(i + ": " + singleMovie.getTitle() + ", " + singleCharacter);
-            }
-            Movie movie = (Movie) selectedMovies.get(scannerInt(scanner) - 1).get(0);
-            movieMenu(movie);
+
+            String keyword = Screen.enter("the actor/actress");
+            ArrayList<Movie> selectedMovies = database.searchForMovieByActor(keyword);
+            movie = (Movie) Screen.chooseListItem(selectedMovies, "char - " + keyword);
+            Screen.print("hello");
         } else {
-            incorrectInput("choice");
+            Screen.incorrectInput("choice");
             searchMenu();
         }
-
-    }
-
-    public static void createMovie() {
-        System.out.println("To create a movie please enter the following information: ");
-        System.out.println("Title: ");
-        String title = scannerString(scanner);
-        System.out.println("Year of production: ");
-        int year = scannerInt(scanner);
-        System.out.println("Enter all of one/multiple genres separated by a space: ");
-        String genre = scannerString(scanner);
-        System.out.println(
-                "Enter characters one by one in this format (actor as role) and when you're done enter done: ");
-        ArrayList<Character> characters = new ArrayList<Character>();
-        characters = characterInsertion(scannerString(scanner), characters);
-        Movie movie = new Movie(title, year, genre, characters);
-        database.addMovie(movie);
-        System.out.println("Movie has been added to the database");
-    }
-
-    public static ArrayList<Character> characterInsertion(String input, ArrayList<Character> characters) {
-        if (input.equals("done")) {
-            return characters;
-        } else {
-            String[] attributes = input.split(" as ", 2);
-            Character character = new Character(attributes[1], attributes[0]);
-            characters.add(character);
-
-            characterInsertion(scannerString(scanner), characters);
-        }
-        return characters;
-    }
-
-    public static void clear() {
-
-        System.out.print("Everything on the console will cleared");
-        System.out.print("\033[H\033[2J");
-        System.out.flush();
+        movieMenu(movie);
 
     }
 
     public static void movieMenu(Movie movie) {
-        String adminOptions = "";
-        String favouriteOption = ", (2) add " + movie.getTitle() + " from your favourite list";
-        boolean admin = currentUser.isAdmin();
-        boolean favourite = currentUser.getFavouriteList().contains(movie);
-        if (admin) {
-            adminOptions = ", (3) update " + movie.getTitle() + ", (4) remove " + movie.getTitle();
-        }
-        if (favourite) {
-            favouriteOption = ", (2) remove " + movie.getTitle() + " from your favourite list";
+        Screen.welcome();
+
+        // Makes sure that you can not use movie menu without selecting a movie first
+        if (movie == null) {
+            mainMenu();
         }
 
-        System.out.println(chooseSentence + "(1) play " + movie.getTitle() + favouriteOption + adminOptions);
-        int choice = scannerInt(scanner);
-        if (choice == 1) {
-            movie.playMovie();
-            System.out.println("Rate this movie 1 to 5: ");
-            currentUser.addSeenMovie(movie, scannerInt(scanner));
-            menu(currentUser.isAdmin());
-        } else if (choice == 2 && favourite) {
-            currentUser.removeFavouriteList(movie);
-            menu(currentUser.isAdmin());
-        } else if (choice == 2 && !favourite) {
-            currentUser.addToFavouriteList(movie);
-            menu(currentUser.isAdmin());
-        } else if (choice == 3 && admin) {
-            updateMovie(movie);
-        } else if (choice == 4 && admin) {
-            removeMovie(movie);
+        // Checks if the selected movie is in users favourite list
+        boolean favourite = currentUser.getFavouriteList().contains(movie);
+
+        // Creates options for the menu
+        ArrayList<String> options = new ArrayList<String>();
+        options.add("play " + movie.getTitle());
+
+        if (favourite) {
+            options.add("remove " + movie.getTitle() + " from your favourite list");
         } else {
-            incorrectInput("choice");
+            options.add("add " + movie.getTitle() + "to your favourite list");
+        }
+        if (currentUser.isAdmin()) {
+            options.add("update " + movie.getTitle());
+            options.add("remove " + movie.getTitle());
+        }
+
+        // Displays options and stores the choice in input
+        int choice = Screen.choice(options);
+
+        if (choice == 1) {
+
+            movie.playMovie();
+            int rating = Screen.enterInt("rating from 1 to 5");
+            currentUser.addSeenMovie(movie, rating);
+
+        } else if (choice == 2 && favourite) {
+
+            currentUser.removeFavouriteList(movie);
+
+        } else if (choice == 2 && !favourite) {
+
+            currentUser.addToFavouriteList(movie);
+
+        } else if (choice == 3 && currentUser.isAdmin()) {
+
+            updateMovie(movie);
+
+        } else if (choice == 4 && currentUser.isAdmin()) {
+
+            database.removeMovie(movie);
+
+        } else {
+            Screen.incorrectInput("choice");
             movieMenu(movie);
         }
+        mainMenu();
 
     }
 
     public static void updateMovie(Movie movie) {
-        System.out.println(
-                "Please select the attribute that you want to update:\n1: Title\n2: Production year\n3: Genre\n4: Characters");
-        int choice = scannerInt(scanner);
+
+        // Creates options for attributes that can be updated
+        ArrayList<String> options = new ArrayList<String>();
+        options.add("Title");
+        options.add("Production year");
+        options.add("Genre");
+        options.add("Characters");
+
+        // Displays options and stores the choice input
+        int choice = Screen.choice(options);
+
         if (choice == 1) {
-            System.out.println("Current title: " + movie.getTitle());
-            System.out.println("Enter the new title: ");
-            String newTitle = scannerString(scanner);
+
+            Screen.print("Current title: " + movie.getTitle());
+
+            String newTitle = Screen.enter("the new title");
             movie.setTitle(newTitle);
-            System.out.println("Title has been updated");
-            menu(currentUser.isAdmin());
+
+            Screen.print("Title has been updated");
+
         } else if (choice == 2) {
-            System.out.println("Current year of production: " + movie.getProductionYear());
-            System.out.println("Enter the new year of production: ");
-            int newYear = scannerInt(scanner);
+
+            Screen.print("Current year of production: " + movie.getProductionYear());
+
+            int newYear = Screen.enterInt("the new production year");
             movie.setProductionYear(newYear);
-            System.out.println("Year of production has been updated");
-            menu(currentUser.isAdmin());
+
+            Screen.print("Year of production has been updated");
+
         } else if (choice == 3) {
-            System.out.println("Current genre/genres: " + movie.getGenre());
-            System.out.println("Enter the new genre/genres (separated by a space): ");
-            String newGenre = scannerString(scanner);
+
+            Screen.print("Current genre/genres: " + movie.getGenre());
+
+            String newGenre = Screen.enter("the new genre/genres (separated by a space)");
             movie.setGenre(newGenre);
-            System.out.println("Genre has been updated");
-            menu(currentUser.isAdmin());
+
+            Screen.print("Genre has been updated");
+
         } else if (choice == 4) {
-            System.out.println("Please select a character to update: ");
-            for (int i = 1; i <= movie.getCharacters().size(); i++) {
-                System.out.println(i + ": " + movie.getCharacters().get(i - 1));
-            }
-            int subChoice = scannerInt(scanner);
-            System.out.println("Current character: " + movie.getCharacters().get(subChoice - 1));
-            String input = scannerString(scanner);
+
+            Screen.print("Please select a character to update: ");
+
+            // Displays characters and stores the choice int
+            int subChoice = Screen.choice(Character.toString(movie.getCharacters()));
+
+            Screen.print("Current character: " + movie.getCharacters().get(subChoice));
+
+            String input = Screen.enter("the new Character in the format of (actor as role)");
             String[] attributes = input.split(" as ", 2);
-            movie.getCharacters().get(subChoice - 1).setActor(attributes[0]);
-            movie.getCharacters().get(subChoice - 1).setRole(attributes[1]);
-            System.out.println("Character has been updated");
-            menu(currentUser.isAdmin());
+            movie.getCharacters().get(subChoice).setActor(attributes[0]);
+            movie.getCharacters().get(subChoice).setRole(attributes[1]);
+
+            Screen.print("Character has been updated");
+
         } else {
-            incorrectInput("choice");
+            Screen.incorrectInput("choice");
+            Screen.pause();
             updateMovie(movie);
         }
-    }
 
-    public static void removeMovie(Movie movie) {
-        database.removeMovie(movie);
-        menu(currentUser.isAdmin());
-    }
-
-    public static void listFavouriteList() {
-        System.out.println("here is your list of your favourite movies");
-    }
-
-    public static String scannerString(Scanner scanner2) {
-        String input = scanner2.nextLine();
-
-        int intInput = 1;
-        try {
-            intInput = Integer.parseInt(input);
-        } catch (Exception e) {
-
-        }
-        if (input.equalsIgnoreCase("q")) {
-            System.out.println("Saving...");
-            DatabaseConn.save(database);
-            clear();
-            System.exit(0);
-
-        } else if (intInput == 0) {
-            menu(currentUser.isAdmin());
-        }
-
-        return input;
-    }
-
-    public static int scannerInt(Scanner scanner) {
-        String input = scanner.nextLine(); // the reason why I'm using the nextLine() and then parsing it to integer and
-                                           // not nextInt() is that nextInt() causes problems with leftover \n (enters)
-                                           // and messes up the inputs
-        if (input.equalsIgnoreCase("q")) {
-            System.out.println("Saving...");
-            DatabaseConn.save(database);
-            clear();
-            System.exit(0);
-
-        }
-        int intInput = 1;
-        try {
-            intInput = Integer.parseInt(input);
-        } catch (NumberFormatException e) {
-            System.out.println(
-                    "Error: listen here you dumb ass, the input should have been a number and not the gibberish that you entered");
-            menu(currentUser.isAdmin());
-        }
-        if (intInput == 0) {
-            menu(currentUser.isAdmin());
-        }
-
-        return intInput;
-    }
-
-    public static void incorrectInput(String input) {
-        System.out.println("Incorrect " + input + ". Please try again.");
+        Screen.pause();
     }
 
 }

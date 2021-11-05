@@ -1,4 +1,6 @@
+
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class Character implements Serializable {
 
@@ -31,6 +33,15 @@ public class Character implements Serializable {
 
     public String toString() {
         return actor + " as " + role;
+    }
+
+    // Static method
+    public static ArrayList<String> toString(ArrayList<Character> array) {
+        ArrayList<String> characters = new ArrayList<>();
+        for (Character character : array) {
+            characters.add(character.toString());
+        }
+        return characters;
     }
 
 }

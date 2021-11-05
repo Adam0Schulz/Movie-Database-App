@@ -1,3 +1,4 @@
+
 import java.util.ArrayList;
 import java.io.Serializable;
 
@@ -17,29 +18,33 @@ public class Movie implements Serializable {
         this.characters = characters;
     }
 
-    // Getters and Setters
-    public String getTitle() {
-        return this.title;
-    }
-
+    // Setters and Getters
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public int getProductionYear() {
-        return this.productionYear;
     }
 
     public void setProductionYear(int productionYear) {
         this.productionYear = productionYear;
     }
 
-    public String getGenre() {
-        return this.genre;
-    }
-
     public void setGenre(String genre) {
         this.genre = genre;
+    }
+
+    public void setCharacters(ArrayList<Character> characters) {
+        this.characters = characters;
+    }
+
+    public String getTitle() {
+        return this.title;
+    }
+
+    public int getProductionYear() {
+        return this.productionYear;
+    }
+
+    public String getGenre() {
+        return this.genre;
     }
 
     public ArrayList<Character> getCharacters() {
@@ -48,18 +53,45 @@ public class Movie implements Serializable {
 
     public void listCharacters() {
         for (int i = 1; i < characters.size(); i++) {
-            System.out.println(i + ": " + characters.get(i - 1));
+            Screen.print(i + ": " + characters.get(i - 1));
         }
-    }
-
-    public void setCharacters(ArrayList<Character> characters) {
-        this.characters = characters;
     }
 
     public void playMovie() {
         for (Character character : characters) {
-            System.out.println(character.getActor() + " - " + character.getRole());
+            Screen.print(character.getActor() + " - " + character.getRole());
         }
+
+    }
+
+    public Character searchActor(String actor) {
+        for (Character character : characters) {
+            if (character.getActor().toLowerCase().contains(actor.toLowerCase())) {
+
+                return character;
+            }
+        }
+        return null;
+
+    }
+
+    // Static method
+    public static ArrayList<String> toString(ArrayList<Movie> array, String additAtt) {
+        String[] strArr = additAtt.split(" - ");
+        ArrayList<String> result = new ArrayList<>();
+        for (Movie movie : array) {
+            String item = movie.getTitle();
+
+            if (strArr[0].equals("year")) {
+                item = item + ", " + movie.getProductionYear();
+            } else if (strArr[0].equals("genre")) {
+                item = item + ", " + movie.getGenre();
+            } else if (strArr[0].equals("char")) {
+                item = item + ", " + movie.searchActor(strArr[1]);
+            }
+            result.add(item);
+        }
+        return result;
 
     }
 
