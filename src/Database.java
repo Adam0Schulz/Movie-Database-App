@@ -100,15 +100,15 @@ public class Database implements Serializable {
         return array;
     }
 
-    public ArrayList<ArrayList<Object>> searchForMovieByActor(String actor) {
-        ArrayList<ArrayList<Object>> array = new ArrayList<ArrayList<Object>>();
+    public ArrayList<Movie> searchForMovieByActor(String actor) {
+        ArrayList<Movie> array = new ArrayList<Movie>();
 
         for (Movie movie : movies) {
-            ArrayList<Object> subArray = new ArrayList<Object>();
-            Object character = (Object) movie.searchActor(actor);
-            subArray.add(movie);
-            subArray.add(character);
-            array.add(subArray);
+            Character character = movie.searchActor(actor);
+            if (character != null) {
+                array.add(movie);
+            }
+
         }
         return array;
     }

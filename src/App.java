@@ -55,7 +55,7 @@ public class App implements Serializable {
         options.add("List all of your favourite movies");
         options.add("See your history");
         if (currentUser.isAdmin()) {
-            options.add("create a movie");
+            options.add("Create a movie");
         }
         // Displays options and stores the choice input
         int choice = Screen.choice(options);
@@ -156,9 +156,9 @@ public class App implements Serializable {
         } else if (choice == 4) {
 
             String keyword = Screen.enter("the actor/actress");
-            ArrayList<ArrayList<Object>> selectedMovies = database.searchForMovieByActor(keyword);
+            ArrayList<Movie> selectedMovies = database.searchForMovieByActor(keyword);
             movie = (Movie) Screen.chooseListItem(selectedMovies, "char - " + keyword);
-
+            Screen.print("hello");
         } else {
             Screen.incorrectInput("choice");
             searchMenu();
