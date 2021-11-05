@@ -1,3 +1,17 @@
 # Movie-Database-App
+To do list
+-   adam
 
-> > > > > > > 537166e431ca11a82a7de7b1c699d32d93314715
+-   simona
+    -   use case description
+    -   logo
+    -   take a nap or two
+
+-   babak
+    -   add movies
+
+-   unasigned
+    -   sequence diagram - generate it from source code
+    -   class diagram - generate it from source code
+    -   presentation - Monday
+
