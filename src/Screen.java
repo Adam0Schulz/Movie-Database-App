@@ -21,7 +21,7 @@ public class Screen {
             + "  /  /_\\  \\  \\            /   |   __|      \\   \\    |  |  |  | |  |\\/|  | |   __|  |   __|  |  |     |  |   >   <   \n"
             + " /  _____  \\  \\    /\\    /    |  |____ .----)   |   |  `--'  | |  |  |  | |  |____ |  |     |  `----.|  |  /  .  \\  \n"
             + "/__/     \\__\\  \\__/  \\__/     |_______||_______/     \\______/  |__|  |__| |_______||__|     |_______||__| /__/ \\__\\ ";
-    private static String goBackInfoMessage = "Anytime you feel like you had enough of this awesomeness press Q to awesome save and exit in style\n";
+    private static String InfoMessage = "Anytime you feel like it you can go back to the main menu by pressing 0 or if you had enough of this awesomeness press Q to save and exit\n";
     private static String chooseSentence = "Please choose one of the following options:";
 
     // User Input
@@ -96,7 +96,7 @@ public class Screen {
     public static void welcome() {
         clear();
         print(welcomeMessage);
-        print(goBackInfoMessage);
+        print(InfoMessage);
 
     }
 
