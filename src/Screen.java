@@ -122,6 +122,11 @@ public class Screen {
         print(chooseSentence);
         listOptions(options);
         int choice = scanInt();
+        if (options.size() < choice) {
+            incorrectInput("choice");
+            pause();
+            App.mainMenu();
+        }
         return choice;
     }
 
@@ -186,10 +191,10 @@ public class Screen {
         }
     }
 
-    // Pauses the application for 0.8 seconds
+    // Pauses the application for 1 second
     public static void pause() {
         try {
-            Thread.sleep(800);
+            Thread.sleep(1000);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -205,7 +210,7 @@ public class Screen {
 
     // Displays incorrectInput error
     public static void incorrectInput(String input) {
-        print(new Error("Incorrect " + input + ". Please try again."));
+        print("\nIncorrect " + input + ". Please try again.\n");
     }
 
     public static ArrayList<Character> characterInsertion(String input, ArrayList<Character> characters) {

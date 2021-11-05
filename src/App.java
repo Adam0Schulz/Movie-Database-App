@@ -184,7 +184,7 @@ public class App implements Serializable {
         if (favourite) {
             options.add("remove " + movie.getTitle() + " from your favourite list");
         } else {
-            options.add("add " + movie.getTitle() + "to your favourite list");
+            options.add("add " + movie.getTitle() + " to your favourite list");
         }
         if (currentUser.isAdmin()) {
             options.add("update " + movie.getTitle());

@@ -114,7 +114,7 @@ public class Database implements Serializable {
     }
 
     public User registration(String username) {
-        String password = Screen.enter("your password");
+        String password = Screen.enter("your new password");
         this.addUser(new User(username, password));
         return this.searchForUser(username);
     }
