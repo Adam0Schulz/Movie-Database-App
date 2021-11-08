@@ -2,7 +2,7 @@
 import java.io.*;
 import java.util.ArrayList;
 
-public class DatabaseConn {
+public abstract class DatabaseConn {
 
     public static void main(String[] args) {
         delete();

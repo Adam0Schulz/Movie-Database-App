@@ -8,7 +8,7 @@
 import java.util.Scanner;
 import java.util.ArrayList;
 
-public class Screen {
+public abstract class Screen {
 
     // Attributes
     private static Scanner scanner = new Scanner(System.in);
