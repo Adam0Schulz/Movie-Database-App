@@ -6,10 +6,6 @@ public class App implements Serializable {
     private static Database database = DatabaseConn.load("database.ser");
     private static User currentUser;
 
-    public static Database getDatabase() {
-        return database;
-    }
-
     public static void main(String[] args) throws Exception {
 
         start();
@@ -286,6 +282,10 @@ public class App implements Serializable {
         }
 
         Screen.pause();
+    }
+
+    public static Database getDatabase() {
+        return database;
     }
 
 }
